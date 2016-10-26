@@ -85,7 +85,9 @@
 -define:UNITY_EDITOR_64
 -define:UNITY_EDITOR_OSX
 -define:UNITY_TEAM_LICENSE
+'Assets/Scripts/BackgroundSizer.cs'
 'Assets/Scripts/PinBottomLeft.cs'
-'Assets/Scripts/PinTopRight.cs'
+'Assets/Scripts/PinTopLeft.cs'
+'Assets/SetDialogueText.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.Runtime.Serialization.dll'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.Xml.Linq.dll'
