@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PinTopRight : MonoBehaviour {
-
+public class PinTopLeft : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {

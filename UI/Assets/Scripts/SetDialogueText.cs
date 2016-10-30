@@ -3,37 +3,52 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class SetDialogueText : MonoBehaviour {
+	public GameObject titlePanel = null ;
+	public GameObject contentPanel = null;
 	private Animator animator; 
 	private bool shown;
 
-
-	// Use this for initialization
-	void Awake () {
+	void Start () {
 		animator = GetComponent<Animator> ();
-		ChangeText ("This is a Test"); 
 		shown = false; 
-
-		// to display animation on run
-		animator.SetTrigger ("Fade Out Text");
-		animator.SetTrigger ("Fade In Text");
-		animator.SetTrigger ("Close");
 	}
 
-	void ChangeText(string newText) {
+	void Update (){
+		if (Input.GetKeyDown ("space")) {
+			StartCoroutine(ChangeText ("This is a Test", "ABC"));
+		}
+		if (Input.GetKeyDown ("a")) {
+			StartCoroutine(ChangeText ("ABCDEF", "1234512345123451 2345123451234 51234512345123451234512345123451234512345123451234512345"));
+		}
+
+		if (Input.GetKeyDown ("b")) {
+			RemoveTextBox ();
+		}
+	}
+		
+	IEnumerator ChangeText(string newText, string newTitle) {
 		if (shown) {
+			// need more to increase the height - transition? 
 			animator.SetTrigger ("Fade Out Text");
-			//change the text
-			animator.SetTrigger ("Fade In Text");
+			yield return new WaitForSeconds(1.3f);
+			SetText (newText, newTitle);
+			animator.SetTrigger ("Fade In");
+			yield return 1; 
 		} else {
-			// set the text 
+			SetText (newText, newTitle);
 			animator.SetTrigger ("Open");
 			shown = true;
 		}
 	}
 
+	private void SetText(string text, string title) {
+		titlePanel.GetComponentInChildren<Text>().text = text;
+		contentPanel.GetComponentInChildren<Text>().text = title;
+	}
+
 	void RemoveTextBox() {
 		shown = false; 
-		animator.SetTrigger ("Closed");
+		animator.SetTrigger ("Close");
 	}
 
 }
