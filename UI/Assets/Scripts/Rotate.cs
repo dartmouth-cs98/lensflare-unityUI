@@ -8,6 +8,8 @@ public class Rotate : MonoBehaviour {
 
 	Renderer renderer;
 
+	Vector3 prevRotation;
+
 	// Use this for initialization
 	void Start () {
 		renderer = GetComponent<Renderer> ();
@@ -21,7 +23,20 @@ public class Rotate : MonoBehaviour {
 		}
 
 		if (indicator_visible && renderer.enabled) {
-			transform.Rotate (Vector3.up, speed * Time.deltaTime);
+//			transform.localEulerAngles.z = Camera.main.transform.localEulerAngles.z;
+//			Vector3 temp = transform.localEulerAngles;
+//			transform.localEulerAngles = new Vector3 (90, temp.y, temp.z);
+
+
+			transform.Rotate (Vector3.forward, speed * Time.deltaTime);
+			Vector3 temp = transform.localEulerAngles;
+			temp.y = Camera.main.transform.localEulerAngles.y;
+			temp.x = Camera.main.transform.localEulerAngles.x;
+			transform.localEulerAngles = temp;
+
+
+//			transform.LookAt (Camera.main.transform);
+
 		} else if (indicator_visible && !renderer.enabled) {
 			renderer.enabled = true;
 		}
