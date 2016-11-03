@@ -293,8 +293,18 @@ public class Photographer : MonoBehaviour
             }
             else // mode == "WikiQuery"
             {
+                /* CLEAN THIS UP OH MY GOD EW */
                 Debug.Log(www.text);
-                sdt.UpdateText(www.text, www.url);
+                string pageTitle = www.text.Substring(www.text.IndexOf("\"title\":")+8, www.text.IndexOf("\"extract\":")-www.text.IndexOf("\"title\":")-9);
+                string pageExtract = www.text.Substring(www.text.IndexOf("\"extract\":")+10, 300);
+                pageTitle = pageTitle.Replace("\n", " ");
+                pageExtract = pageExtract.Replace("\n", " ");
+                pageTitle = pageTitle.Replace("\\", "");
+                pageExtract = pageExtract.Replace("\\", "");
+                pageTitle = pageTitle.Replace("\"", "");
+                pageExtract = pageExtract.Replace("\"", "");
+                pageExtract = pageExtract.Replace("}", "");
+                sdt.UpdateText(pageTitle, pageExtract);
             }
         }
         else
