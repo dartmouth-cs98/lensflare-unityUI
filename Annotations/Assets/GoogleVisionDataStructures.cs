@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace Assets.Scripts
 {
     internal static class GoogleVisionParser
@@ -586,6 +587,12 @@ namespace Assets.Scripts
             this.y = y;
         }
 
+//		public int[] GetHeightAndWidth() {
+//			if (v1 == null) {
+//				return new int[]{Math.Abs(y[0] - y[1]), Math.Abs(x[0]-x[1])};
+//			}
+//			return new int[]{Math.Abs(v2[1] - v1[1]), Math.Abs(v2[0]-v1[0])};
+//		}
     }
 
     internal class Location
@@ -604,11 +611,39 @@ namespace Assets.Scripts
             return "(lat: " + this.latitude + ", long: " + this.longitude + ")";
         }
 
+    }
 
-		public static void Main() {
-			System.Console.WriteLine ("hello");
+	internal class TextGroup
+	{
+		private ArrayList textAnnotations; 
+		private Polygon boundingBox;
+		private int lineHeight;
+
+		public TextGroup(ArrayList textAnnotations, Polygon boundingBox, int lineHeight)
+		{
+			this.textAnnotations = textAnnotations;
+			this.lineHeight = lineHeight;
+			this.boundingBox = boundingBox;
+		}
+			
+		public Polygon getBoundingBox() {
+			return this.boundingBox; 
 		}
 
-    }
+		public int getLineHeight() {
+			return this.lineHeight;
+		}
+
+		public ArrayList getTextAnnotations() {
+			return this.textAnnotations;
+		}
+
+		public override string ToString()
+		{
+			return "box " + this.boundingBox + ", height: " + this.lineHeight + ", text: " + textAnnotations.ToString() +")";
+		}
+
+
+	}
 
 }
