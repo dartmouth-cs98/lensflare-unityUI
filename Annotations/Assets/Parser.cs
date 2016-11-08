@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Assets.Scripts;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
-public class Parser : MonoBehaviour {
+
+public class Parser : MonoBehaviour{
 
 	string result = "{" +
 	                "  \"labelAnnotations\": [" +
@@ -2317,13 +2320,54 @@ public class Parser : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		print ("hello");
-		string n = "hello";
-		ArrayList results = GoogleVisionParser.parseAllAnnotations (result);
-		ArrayList textAnnots = (ArrayList)results [0];
+//		ArrayList results = GoogleVisionParser.parseAllAnnotations (result);
+//		ArrayList textAnnots = (ArrayList)results [0];
+//		print (((TextAnnotation)textAnnots [1]).getBoundingPoly());
 
-		print (((TextAnnotation)textAnnots [1]).getBoundingPoly());
+		ArrayList s1 = new ArrayList ();
+		s1.Add ("CHANGE YOU WORDS");
+		string[] v1_1 = new string[4]{"123", "127", "1118", "1114"};
+		string[] v1_2 = new string[4]{"180", "104", "156", "232"};
+		Polygon p1 = new Polygon (v1_1, v1_2);
+		TextGroup g1 = new TextGroup (s1, p1, 76);
+		g1.setScore (11);
+
+		ArrayList s2 = new ArrayList ();
+		s1.Add ("CHANGE YOU MINDSET");
+		string[] v2_1 = new string[4]{"414", "416", "1425", "1423"};
+		string[] v2_2 = new string[4]{ "288", "204", "227", "311" };
+		Polygon p2 = new Polygon (v2_1, v2_2);
+		TextGroup g2 = new TextGroup (s2, p2, 84);
+		g2.setScore (10);
+
+		ArrayList s3 = new ArrayList ();
+		s3.Add ("This is too hard");
+		string[] v3_1 = new string[4]{ "514", "514", "647", "647" };
+		string[] v3_2 = new string[4] { "396", "367", "373", "397" };
+		Polygon p3 = new Polygon (v3_1, v3_2);
+		TextGroup g3 = new TextGroup (s3, p3, 20);
+		g3.setScore (3);
+
+		ArrayList clusters = new ArrayList();
+		clusters.Add (g1);
+		clusters.Add (g2);
+		clusters.Add (g3);
+
+		print (clusters);
+		clusters.Sort();
+		print (clusters);
+
+
+
+//		clusters.Sort (delegate(TextGroup a, TextGroup b) {
+//			return a.getScore ().CompareTo (b.getScore ());
+//		});
+//
+		print(clusters);
+			
 	}
+
+
 	
 	// Update is called once per frame
 	void Update () {
