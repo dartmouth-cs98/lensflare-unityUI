@@ -34,3 +34,5 @@
 /Users/armin/GitHub/lensflare-unityUI/UI/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/armin/GitHub/lensflare-unityUI/UI/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/armin/GitHub/lensflare-unityUI/UI/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/armin/GitHub/lensflare-unityUI/UI/Temp/bin/Debug/UnityEngine.Advertisements.dll
+/Users/armin/GitHub/lensflare-unityUI/UI/Temp/bin/Debug/UnityEngine.Purchasing.dll
