@@ -2348,7 +2348,7 @@ public class Parser : MonoBehaviour{
 		TextGroup g3 = new TextGroup (s3, p3, 20);
 		g3.setScore (3);
 
-		ArrayList clusters = new ArrayList();
+		SortedList clusters = new SortedList();
 		clusters.Add (g1);
 		clusters.Add (g2);
 		clusters.Add (g3);
