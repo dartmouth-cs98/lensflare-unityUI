@@ -570,8 +570,8 @@ namespace Assets.Scripts
 
     internal class Polygon
     {
-        private object[] v1;
-        private object[] v2;
+        public object[] v1;
+        public object[] v2;
         private char[] x;
         private char[] y;
 

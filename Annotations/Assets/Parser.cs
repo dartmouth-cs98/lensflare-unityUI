@@ -15,6 +15,10 @@ public class Parser : MonoBehaviour{
 //		ArrayList textAnnots = (ArrayList)results [0];
 //		print (((TextAnnotation)textAnnots [1]).getBoundingPoly());
 
+		int width = 1600;
+		int height = 898;
+		Vector2 center = new Vector2 (width / 2, height / 2);
+
 		ArrayList s1 = new ArrayList ();
 		s1.Add ("CHANGE YOU WORDS");
 		string[] v1_1 = new string[4]{"123", "127", "1118", "1114"};
@@ -47,18 +51,43 @@ public class Parser : MonoBehaviour{
 		List<TextGroup> sorted = clusters.OrderByDescending (cluster => cluster.getScore ()).ToList();
 
 		foreach(TextGroup cluster in sorted) {
-			print (cluster.getScore ());
+//			print (cluster.getScore ());
 		}
 
+		Vector2 polyCenter = centerOfPoly (p1);
+		float dist = Vector2.Distance (polyCenter, center);
 
 
-//		clusters.Sort (delegate(TextGroup a, TextGroup b) {
-//			return a.getScore ().CompareTo (b.getScore ());
-//		});
-//
-		print(clusters);
-			
+		float pic_div = height / 4;
+		int lh = g1.getLineHeight ();
+		var lh_score = lh / pic_div;
+
+		print ("lh_score: " + lh_score);
+		print ("dist: " + dist);
+
+
+
+
+//		print (polyCenter.ToString() + " / " + center.ToString());
+//		print ("dist");
+//		print (dist);
+
 	}
+
+	Vector2 centerOfPoly(Polygon poly) {
+
+		Vector2 leftBtm = new Vector2(int.Parse((string)poly.v1[0]), int.Parse((string)poly.v2[0]));
+		Vector2 leftTop = new Vector2(int.Parse((string)poly.v1[1]), int.Parse((string)poly.v2[1]));
+		Vector3 rightBtm = new Vector2(int.Parse((string)poly.v1[3]), int.Parse((string)poly.v2[3]));
+
+		int width = (int)Mathf.Abs (leftBtm.x + rightBtm.x);
+		int height = (int)Mathf.Abs (leftBtm.y + leftTop.y);
+
+		Vector2 center = new Vector2 (width / 2, height / 2);
+		return center;
+	}
+
+
 
 
 	
