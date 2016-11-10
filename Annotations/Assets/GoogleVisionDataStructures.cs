@@ -613,7 +613,7 @@ namespace Assets.Scripts
 
     }
 
-	internal class TextGroup : IComparable<TextGroup>
+	internal class TextGroup
 	{
 		private ArrayList textAnnotations; 
 		private Polygon boundingBox;
@@ -645,10 +645,6 @@ namespace Assets.Scripts
 
 		public void setScore(float s) {
 			score = s;
-		}
-
-		public int CompareTo(TextGroup other) {
-			return score.CompareTo (other.getScore ());
 		}
 
 		public override string ToString()
