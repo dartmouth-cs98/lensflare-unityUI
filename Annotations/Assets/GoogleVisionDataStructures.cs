@@ -1,4 +1,6 @@
-﻿using System;
+﻿using UnityEngine;
+using Assets.Scripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -570,8 +572,8 @@ namespace Assets.Scripts
 
     internal class Polygon
     {
-        private object[] v1;
-        private object[] v2;
+        public object[] v1;
+        public object[] v2;
         private char[] x;
         private char[] y;
 
@@ -618,6 +620,7 @@ namespace Assets.Scripts
 		private ArrayList textAnnotations; 
 		private Polygon boundingBox;
 		private int lineHeight;
+		private float score;
 
 		public TextGroup(ArrayList textAnnotations, Polygon boundingBox, int lineHeight)
 		{
@@ -638,12 +641,37 @@ namespace Assets.Scripts
 			return this.textAnnotations;
 		}
 
+		public float getDistScore() {
+			return Vector2.Distance (centerOfPoly (), Parser.center);
+		}
+
+		public float getLineScore() {
+			float pic_div = Parser.height / 4;
+			return lineHeight / pic_div; 
+		}
+
+		public float getScore() {
+			return getDistScore () + getLineScore ();
+		}
+
 		public override string ToString()
 		{
 			return "box " + this.boundingBox + ", height: " + this.lineHeight + ", text: " + textAnnotations.ToString() +")";
 		}
 
+		private Vector2 centerOfPoly() {
+
+			Vector2 leftBtm = new Vector2(int.Parse((string)boundingBox.v1[0]), int.Parse((string)boundingBox.v2[0]));
+			Vector2 leftTop = new Vector2(int.Parse((string)boundingBox.v1[1]), int.Parse((string)boundingBox.v2[1]));
+			Vector3 rightBtm = new Vector2(int.Parse((string)boundingBox.v1[3]), int.Parse((string)boundingBox.v2[3]));
+
+			int width = (int)Mathf.Abs (leftBtm.x + rightBtm.x);
+			int height = (int)Mathf.Abs (leftBtm.y + leftTop.y);
+
+			Vector2 center = new Vector2 (width / 2, height / 2);
+			return center;
+		}			
+
 
 	}
-
 }
