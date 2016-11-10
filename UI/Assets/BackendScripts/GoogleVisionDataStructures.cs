@@ -572,27 +572,48 @@ namespace Assets.Scripts
     {
         private object[] v1;
         private object[] v2;
-        private char[] x;
-        private char[] y;
+        private int[] x;
+        private int[] y;
 
         public Polygon(object[] v1, object[] v2)
         {
             this.v1 = v1;
             this.v2 = v2;
+            this.x = new int[v1.Length];
+            this.y = new int[v2.Length];
+            for (int i = 0; i < v1.Length; i++)
+            {
+                x[i] = int.Parse((string)v1[i]);
+            }
+            for (int i = 0; i < v2.Length; i++)
+            {
+                y[i] = int.Parse((string)v2[i]);
+            }
         }
 
-        public Polygon(char[] x, char[] y)
+        public Polygon(int[] x, int[] y)
         {
             this.x = x;
             this.y = y;
         }
 
-		public int[] GetHeightAndWidth() {
-			if (v1 == null) {
-				return new int[]{Math.Abs(y[0] - y[1]), Math.Abs(x[0]-x[1])};
-			}
-			return new int[]{Math.Abs(v2[1] - v1[1]), Math.Abs(v2[0]-v1[0])};
-		}
+
+        public override string ToString()
+        {
+            string xString = "";
+            string yString = "";
+            for (int i = 0; i < x.Length; i++)
+            {
+                xString += x[i] + ", ";
+            }
+            for (int i = 0; i < y.Length; i++)
+            {
+                yString += y[i] + ", ";
+            }
+            if (yString.Length > 0) yString = yString.Substring(0, yString.Length - 2);
+            return "x: " + xString + "y: " + yString;
+        }
+
     }
 
     internal class Location
