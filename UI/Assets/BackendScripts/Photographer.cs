@@ -219,7 +219,7 @@ public class Photographer : MonoBehaviour
         }
         else
         {
-            Debug.Log("No landmarks detected.");
+            sdt.UpdateText("Sorry!", "No landmark detected.");
         }
     }
 
@@ -318,6 +318,7 @@ public class Photographer : MonoBehaviour
                 Debug.Log("ABOUT TO UPDATE TEXT");
                 Debug.Log(pageTitle);
                 Debug.Log(pageExtract);
+
                 sdt.UpdateText(pageTitle, pageExtract);
             }
         }
