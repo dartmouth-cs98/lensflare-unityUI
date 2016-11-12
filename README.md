@@ -57,4 +57,9 @@ The build process for LensFlare is reasonably intricate. Microsoft offers excell
 
 * Formatted results of Cloud Vision Api Call
 
+## Update as of Nov 12:
+* Static canvas and active icon complete, fine tuning placement and sizing. 
+* Landmark recognition working and populating the canvas with a title and brief description of the landmark, retrieved from Wikipedia.
+* Translation needs work: clustering of the text we retrieve from Cloud Vision proving difficult, will require more work in the winter. Scoring of clusters completed based on position in frame and size of the text. 
+
 ## Acknowledgements
