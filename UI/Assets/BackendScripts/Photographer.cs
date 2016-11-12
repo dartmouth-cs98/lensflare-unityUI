@@ -9,9 +9,10 @@ using Assets.Scripts;
 public class Photographer : MonoBehaviour
 {
     public SetDialogueText sdt;
+    public Rotate rotate; 
 
     string TIMEFORMAT = "yyddMHHmmss";
-    string TESTFILE = "Brooklyn_Bridge_Postdlf.jpg";
+    string TESTFILE = "sign.jpg";
 
     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
     PhotoCapture photo = null;
@@ -19,6 +20,7 @@ public class Photographer : MonoBehaviour
     string detections = "";
     string translations = "";
     ArrayList annotations = new ArrayList();
+    int maxLength = 235;
 
     public void Start()
     {
@@ -97,6 +99,10 @@ public class Photographer : MonoBehaviour
             print("time to save pic:" + timer.ElapsedMilliseconds);
 
             Annotate(imgBase64);
+        }
+        else
+        {
+            Debug.Log("ERROR: " + result.ToString());
         }
 
         //TODO - delete photos after translation completes (if we decide to accumulate pics instead of overwriting)
@@ -296,14 +302,22 @@ public class Photographer : MonoBehaviour
                 /* CLEAN THIS UP OH MY GOD EW */
                 Debug.Log(www.text);
                 string pageTitle = www.text.Substring(www.text.IndexOf("\"title\":")+8, www.text.IndexOf("\"extract\":")-www.text.IndexOf("\"title\":")-9);
-                string pageExtract = www.text.Substring(www.text.IndexOf("\"extract\":")+10, 300);
-                pageTitle = pageTitle.Replace("\n", " ");
-                pageExtract = pageExtract.Replace("\n", " ");
+                string pageExtract = www.text.Substring(www.text.IndexOf("\"extract\":")+10);
+                if (pageExtract.Length > maxLength)
+                {
+                    pageExtract.Substring(0, maxLength);
+                }
+
+                pageTitle = pageTitle.Replace("\\n", " ");
+                pageExtract = pageExtract.Replace("\\n", " ");
                 pageTitle = pageTitle.Replace("\\", "");
                 pageExtract = pageExtract.Replace("\\", "");
                 pageTitle = pageTitle.Replace("\"", "");
                 pageExtract = pageExtract.Replace("\"", "");
                 pageExtract = pageExtract.Replace("}", "");
+                Debug.Log("ABOUT TO UPDATE TEXT");
+                Debug.Log(pageTitle);
+                Debug.Log(pageExtract);
                 sdt.UpdateText(pageTitle, pageExtract);
             }
         }
@@ -311,6 +325,7 @@ public class Photographer : MonoBehaviour
         {
             Debug.Log(www.error);
         }
+        rotate.indicator_visible = false;
     }
 }
 
