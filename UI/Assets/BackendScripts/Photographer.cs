@@ -5,11 +5,15 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using Assets.Scripts;
+using HoloToolkit.Unity;
+using UnityEngine.Windows.Speech;
+
 
 public class Photographer : MonoBehaviour
 {
     public SetDialogueText sdt;
-    public Rotate rotate; 
+    public Rotate rotate;
+    TextToSpeechManager ttsm; 
 
     string TIMEFORMAT = "yyddMHHmmss";
     string TESTFILE = "sign.jpg";
@@ -24,6 +28,7 @@ public class Photographer : MonoBehaviour
 
     public void Start()
     {
+        ttsm = GetComponent<TextToSpeechManager>();
         print("photographer started");
         PhotoCapture.CreateAsync(false, OnPhotoCaptureCreated);
     }
@@ -318,7 +323,7 @@ public class Photographer : MonoBehaviour
                 Debug.Log("ABOUT TO UPDATE TEXT");
                 Debug.Log(pageTitle);
                 Debug.Log(pageExtract);
-
+                ttsm.SpeakText(pageTitle);
                 sdt.UpdateText(pageTitle, pageExtract);
             }
         }

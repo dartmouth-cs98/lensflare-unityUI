@@ -2,12 +2,17 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
+using HoloToolkit.Unity;
 
 // Based on Holograms 101 tutorial 
 public class SpeechManager : MonoBehaviour
 {
-    public Rotate rotate; 
+    public Rotate rotate;
+    //public TextToSpeechManager tsm;
+    TextToSpeechManager tsm;
+
     Photographer photographer;
+
     KeywordRecognizer keywordRecognizer = null;
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
     bool testing = false;
@@ -16,11 +21,15 @@ public class SpeechManager : MonoBehaviour
 
     void Start()
     {
+
         photographer = GetComponent<Photographer>();
+        tsm = GetComponent<TextToSpeechManager>();
 
         keywords.Add("Translate", () => {
             print("Translating...");
-            rotate.indicator_visible = true; 
+           
+
+            rotate.indicator_visible = true;
             if (testing)
             {
                 photographer.UseLocalPicture();
@@ -33,6 +42,9 @@ public class SpeechManager : MonoBehaviour
 
         keywords.Add("Lensflare, what is this?", () => {
             print("Finding landmark...");
+
+            tsm.SpeakText("Finding Landmarks around you");
+
             rotate.indicator_visible = true;
             if (testing)
             {
