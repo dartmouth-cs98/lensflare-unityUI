@@ -63,3 +63,5 @@ The build process for LensFlare is reasonably intricate. Microsoft offers excell
 * Translation needs work: clustering of the text we retrieve from Cloud Vision proving difficult, will require more work in the winter. Scoring of clusters completed based on position in frame and size of the text. 
 
 ## Acknowledgements
+http://www.roadtoholo.com/2016/05/04/1601/text-to-speech-for-hololens/
+Google Vision
