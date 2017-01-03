@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.VR.WSA.WebCam;
 using System.Linq;
 using System;
+using System.Net;
 using System.Collections.Generic;
 using Assets.Scripts;
 
@@ -16,8 +17,6 @@ public class Photographer : MonoBehaviour
     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
     PhotoCapture photo = null;
     string filepath = "";
-    string detections = "";
-    string translations = "";
     ArrayList annotations = new ArrayList();
 
     public void Start()
@@ -151,9 +150,9 @@ public class Photographer : MonoBehaviour
         StartCoroutine(WaitForRequest(www, "Detect"));
     }
 
-    // IN PROGRESS
+    // READY FOR TESTING
     // need to translate everything in the ArrayList textDetections
-    public void TranslateText(string targetLang)
+    public void TranslateText(ArrayList textDetections, string targetLang)
     {
         // Google Translate API static values
         string apiKey = "AIzaSyA8Gc4eafOjnhnj5QYn7I2ZNEumpxtxY-s";
@@ -163,16 +162,15 @@ public class Photographer : MonoBehaviour
         string source = "&source=";
         string target = "&target=" + targetLang;
 
-        ArrayList textDetections = GoogleVisionParser.parseTextAnnotations(detections);
-        source = source + ((TextAnnotation) textDetections[0]).getLocale(); // source language
-
         // Google Translate returns an error when source and target language are the same
         // currently simply notifying the user if this case arises
-        if (source.Equals(targetLang, StringComparison.Ordinal))
+        string translations = "";
+        string sourceLang = ((TextAnnotation)textDetections[0]).getLocale();
+        if (sourceLang.Equals(targetLang, StringComparison.Ordinal))
         {
             for (int i = 0; i < textDetections.Count; i++)
             {
-                translations = translations + ' ' + ((TextAnnotation)textDetections[i]).getDescription();
+                translations = translations + ' ' + ((TextAnnotation) textDetections[i]).getDescription();
             }
             translations = translations.Trim();
             Debug.Log(translations);
@@ -180,10 +178,11 @@ public class Photographer : MonoBehaviour
         }
         else
         {
-            query = ((TextAnnotation)textDetections[0]).getDescription();
+            source = source + sourceLang;
+            query = ((TextAnnotation) textDetections[0]).getDescription();
             for (int i =  1; i < textDetections.Count; i++)
             {
-                query = query + '+' + ((TextAnnotation)textDetections[i]).getDescription();
+                query = query + '+' + ((TextAnnotation) textDetections[i]).getDescription();
             }
             
             translateURL = translateURL + query + source + target;
@@ -194,17 +193,16 @@ public class Photographer : MonoBehaviour
         }
     }
 
-    // READY FOR TESTING
-    public void SearchWiki()
+    // for searching Wikipedia for matching page titles
+    public void SearchWiki(ArrayList landmarks)
     {
         // Wiki Search API static values
         string searchURL = "https://en.wikipedia.org/w/api.php?action=opensearch&limit=1&format=json&search=";
 
         // TODO: iterate through and process the entire list of landmark annotations
-        ArrayList landmarks = (ArrayList)GoogleVisionParser.parseAllAnnotations(detections)[2];
         if (landmarks.Count > 0)
         {
-            string search = ((LandmarkAnnotation)landmarks[0]).getDescription().Replace(" ", "%20");
+            string search = ((LandmarkAnnotation) landmarks[0]).getDescription().Replace(" ", "%20");
             searchURL = searchURL + search.Substring(1, search.Length - 1);
             Debug.Log(searchURL);
 
@@ -217,11 +215,11 @@ public class Photographer : MonoBehaviour
         }
     }
 
-    // READY FOR TESTING
+    // for querying for Wikipedia page results given a proper page title
     public void QueryWiki(string title)
     {
         // Wiki Search API static values
-        string queryURL = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=&explaintext=&format=json&redirects=&titles=";
+        string queryURL = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&exintro=&explaintext=&format=json&redirects=&pithumbsize=300&titles=";
 
         queryURL = queryURL + title.Replace(" ", "%20");
         Debug.Log(queryURL);
@@ -238,7 +236,7 @@ public class Photographer : MonoBehaviour
         {
             if (mode.Equals("Detect", StringComparison.Ordinal))
             {
-                detections = www.text;
+                string detections = www.text;
                 Debug.Log(detections);
 
                 annotations = GoogleVisionParser.parseAllAnnotations(detections);
@@ -247,19 +245,23 @@ public class Photographer : MonoBehaviour
                 {
                     for (int j = 0; j < ((ArrayList) annotations[i]).Count; j++)
                     {
-
-                        Debug.Log("\n" + ((ArrayList)annotations[i])[j]);
+                        Debug.Log("\n" + ((ArrayList) annotations[i])[j]);
                     }
                 }
 
                 print("time to get response:" + timer.ElapsedMilliseconds);
                 timer.Stop();
 
-                SearchWiki();
+                // currently implemented to SearchWiki every time
+                ArrayList landmarks = (ArrayList)annotations[2];
+                SearchWiki(landmarks);
+
+                // ArrayList textDetections = (ArrayList)annotations[3]; // OR WHICHEVER ONE IT IS
+                // TranslateText(annotations);
             }
             else if (mode.Equals("Translate", StringComparison.Ordinal))
             {
-                translations = www.text;
+                string translations = www.text;
                 Debug.Log(translations);
             }
             else if (mode.Equals("WikiSearch", StringComparison.Ordinal))
@@ -278,7 +280,8 @@ public class Photographer : MonoBehaviour
                 else // continue searching through substrings for potential pages of interest
                 {
                     // currently takes away last word in query for each subquery (could improve on this heuristic)
-                    string subqueryURL = www.url.Substring(www.url.LastIndexOf("%20"));
+                    string subqueryURL = www.url.Substring(0,www.url.LastIndexOf("%20"));
+                    Debug.Log(subqueryURL);
                     if (!String.IsNullOrEmpty(subqueryURL))
                     {
                         WWW recWWW = new WWW(subqueryURL);
@@ -293,17 +296,38 @@ public class Photographer : MonoBehaviour
             }
             else // mode == "WikiQuery"
             {
-                /* CLEAN THIS UP OH MY GOD EW */
+                string[] repChars = {"\n", "\\", "\"", "}"}; // UPDATE THIS AS NECESSARY
+
                 Debug.Log(www.text);
+
+                // will this always work???
+                // should include checks on this
                 string pageTitle = www.text.Substring(www.text.IndexOf("\"title\":")+8, www.text.IndexOf("\"extract\":")-www.text.IndexOf("\"title\":")-9);
-                string pageExtract = www.text.Substring(www.text.IndexOf("\"extract\":")+10, 300);
-                pageTitle = pageTitle.Replace("\n", " ");
-                pageExtract = pageExtract.Replace("\n", " ");
-                pageTitle = pageTitle.Replace("\\", "");
-                pageExtract = pageExtract.Replace("\\", "");
-                pageTitle = pageTitle.Replace("\"", "");
-                pageExtract = pageExtract.Replace("\"", "");
-                pageExtract = pageExtract.Replace("}", "");
+                string pageExtract = www.text.Substring(www.text.IndexOf("\"extract\":")+10, 235);
+
+                // TEST THIS
+                string imgSrc = www.text.Substring(www.text.IndexOf("\"source\":")+9, www.text.IndexOf("\"width\":")-www.text.IndexOf("\"source\":")-10);
+                imgSrc = imgSrc.Substring(1, imgSrc.Length - 1);
+
+                // clean up text for JSON response characters
+                for (int i = 0; i < repChars.Length; i++)
+                {
+                    // fix the replacement character(s) as necessary
+                    pageTitle = pageTitle.Replace(repChars[i], "");
+                    pageExtract = pageExtract.Replace(repChars[i], "");
+                }
+
+                // TEST THIS
+                if (!String.IsNullOrEmpty(imgSrc))
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        client.DownloadFileAsync(new Uri(imgSrc), @"./Assets/Images/" + pageTitle + ".png");
+                        // HOW TO CHECK IF DOWNLOAD COMPLETED CORRECTLY???
+                    }
+                }
+                
+
                 sdt.UpdateText(pageTitle, pageExtract);
             }
         }
