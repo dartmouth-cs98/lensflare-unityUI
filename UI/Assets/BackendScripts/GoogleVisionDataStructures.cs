@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace Assets.Scripts
 {
     internal static class GoogleVisionParser
@@ -571,19 +572,46 @@ namespace Assets.Scripts
     {
         private object[] v1;
         private object[] v2;
-        private char[] x;
-        private char[] y;
+        private int[] x;
+        private int[] y;
 
         public Polygon(object[] v1, object[] v2)
         {
             this.v1 = v1;
             this.v2 = v2;
+            this.x = new int[v1.Length];
+            this.y = new int[v2.Length];
+            for (int i = 0; i < v1.Length; i++)
+            {
+                x[i] = int.Parse((string)v1[i]);
+            }
+            for (int i = 0; i < v2.Length; i++)
+            {
+                y[i] = int.Parse((string)v2[i]);
+            }
         }
 
-        public Polygon(char[] x, char[] y)
+        public Polygon(int[] x, int[] y)
         {
             this.x = x;
             this.y = y;
+        }
+
+
+        public override string ToString()
+        {
+            string xString = "";
+            string yString = "";
+            for (int i = 0; i < x.Length; i++)
+            {
+                xString += x[i] + ", ";
+            }
+            for (int i = 0; i < y.Length; i++)
+            {
+                yString += y[i] + ", ";
+            }
+            if (yString.Length > 0) yString = yString.Substring(0, yString.Length - 2);
+            return "x: " + xString + "y: " + yString;
         }
 
     }
@@ -605,5 +633,38 @@ namespace Assets.Scripts
         }
 
     }
+
+	internal class TextGroup
+	{
+		private ArrayList textAnnotations; 
+		private Polygon boundingBox;
+		private int lineHeight;
+
+		public TextGroup(ArrayList textAnnotations, Polygon boundingBox, int lineHeight)
+		{
+			this.textAnnotations = textAnnotations;
+			this.lineHeight = lineHeight;
+			this.boundingBox = boundingBox;
+		}
+			
+		public Polygon getBoundingBox() {
+			return this.boundingBox; 
+		}
+
+		public int getLineHeight() {
+			return this.lineHeight;
+		}
+
+		public ArrayList getTextAnnotations() {
+			return this.textAnnotations;
+		}
+
+		public override string ToString()
+		{
+			return "box " + this.boundingBox + ", height: " + this.lineHeight + ", text: " + textAnnotations.ToString() +")";
+		}
+
+
+	}
 
 }

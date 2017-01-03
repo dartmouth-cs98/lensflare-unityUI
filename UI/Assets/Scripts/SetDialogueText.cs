@@ -32,6 +32,10 @@ public class SetDialogueText : MonoBehaviour {
     }
 
     IEnumerator ChangeText(string newText, string newTitle) {
+        Debug.Log("Change text called");
+        Debug.Log(newText);
+        Debug.Log(newTitle);
+        Debug.Log("ShowN? " + shown);
 		if (shown) {
 			// need more to increase the height - transition? 
 			animator.SetTrigger ("Fade Out Text");
