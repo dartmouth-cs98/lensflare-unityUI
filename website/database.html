@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link href="style.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,900" rel="stylesheet">
+</head>
+
+<body onload="loadInit()">
+  <div id="sidebar" class="sidebar">
+    <div class="museums-title">Lensflare</div>
+  </div>
+  <div id="db-name" class="db-title"></div>
+  <div id="content" class="db-content"></div>
+</body>
+
+
+<script>
+var museums = ["The MoMA", "Dallas Museum of Art", "DALI Lab"]
+
+
+function loadInit() {
+  for (var museum in museums) {
+    document.getElementById("sidebar").innerHTML += "<a onclick='loadDatabase(this)'>" + museums[museum] + "</a><br />"
+  }
+  var start = {};
+  start.text = museums[0]
+  document.getElementById("db-name").innerHTML = museums[0]
+}
+
+function loadDatabase(museum) {
+  document.getElementById("db-name").innerHTML = museum.text
+  
+}
+</script>
