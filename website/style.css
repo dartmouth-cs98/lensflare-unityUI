@@ -25,6 +25,7 @@
 .db-content {
   padding-top: 15px;
   padding-left: 205px;
+  padding-right: 10px;
 }
 .db-title {
   font-weight: 300;
@@ -46,9 +47,47 @@
   line-height: 200%;
 }
 
+.db-table th {
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.db-table td {
+  vertical-align: top;
+  padding: 7px;
+}
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.edit-button {
+  font-family: 'Raleway', sans-serif;
+  width: 50px;
+  font-size: 12px;
+  background-color: inherit;
+  border: none;
+  border-radius: 5px;
+  padding: 3px;
+  float: right;
+}
+
+.logout-button {
+  position: absolute;
+  bottom: 0;
+  width: 203px;
+  background-color: #0000b3;
+  color: white;
+  text-align: center;
+  left: 0;
+  font-size: 16px;
+  height: 25px;
+  padding-top: 3px;
+}
+
 .text-box {
   width: 100%;
-
 }
 .login-button {
   font-family: 'Raleway', sans-serif;
@@ -64,12 +103,17 @@
 
 .login-button:hover {
   border: 2px solid #0000b3;
-  /*font-family: 'Raleway', sans-serif;
-  background-color: #0000b3;
-  color: white;
-  font-weight: bold;*/
+}
+
+.edit-button:hover {
+  text-decoration: underline;
 }
 
 body {
   font-family: 'Raleway', sans-serif;
+  margin-right:0px;
+}
+
+button:focus {
+  outline: none;
 }

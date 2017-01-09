@@ -9,14 +9,23 @@
   <div id="sidebar" class="sidebar">
     <div class="museums-title">Lensflare</div>
   </div>
+  <div class="logout-button">
+    logout
+    <!-- <a href="index.html">logout</a> -->
+  </div>
   <div id="db-name" class="db-title"></div>
-  <div id="content" class="db-content"></div>
+  <div id="content" class="db-content">
+    <table id="db-table" class="db-table"></div>
+  </div>
 </body>
 
 
 <script>
 var museums = ["The MoMA", "Dallas Museum of Art", "DALI Lab"]
-
+var dummyTitles = ["T-Rex", "Long Neck Thing", "The Sphinx"]
+var dummyText = ["The T-Rex is a scary beast, it will eat you up and gobble you whole, without a second thought for your wellbeing or happiness.",
+                "The long neck giraffe beast is also pretty fucking scary but it's less terrifying that a T-Rex because it prob can't eat you whole or it would choke. It prob also only eats grass.",
+                "The Sphinx will ask you a very difficult riddle; if you are able to figure out the answer to the riddle then you can move on past her forboding glare and into the pyramid."]
 
 function loadInit() {
   for (var museum in museums) {
@@ -25,10 +34,37 @@ function loadInit() {
   var start = {};
   start.text = museums[0]
   document.getElementById("db-name").innerHTML = museums[0]
+  loadDatabase(start)
 }
 
 function loadDatabase(museum) {
   document.getElementById("db-name").innerHTML = museum.text
-  
+
+  document.getElementById("db-table").innerHTML = "";
+  var table = document.getElementById("db-table");
+  var header = table.createTHead();
+  var headerRow = header.insertRow(0);
+  headerRow.insertCell(0).innerHTML = "Image"
+  headerRow.insertCell(1).innerHTML = "Title"
+  headerRow.insertCell(2).innerHTML = "Text"
+  for (var row = 1; row < 4; row++) {
+    var rowV = table.insertRow(row);
+    rowV.insertCell(0).innerHTML = "<img width='auto' height='200px' src=\"image" + row + ".jpg\">"
+    rowV.insertCell(1).innerHTML = "<button class=\"edit-button\" type=\"button\" onclick=\"editTitle(" + (row - 1) + ")\">edit</button>" + museum.text + "<br />" + dummyTitles[row - 1];
+    rowV.insertCell(2).innerHTML = "<button class=\"edit-button\" type=\"button\" onclick=\"editText(" + (row - 1) + ")\">edit</button>" + museum.text + "<br />" + dummyText[row - 1];
+
+
+    rowV.cells[0].style.backgroundColor = "#f0f0f0";
+    rowV.cells[2].style.backgroundColor = "#f0f0f0";
+
+    // for (var column = 0; column < 3; column++) {
+    //   rowV.insertCell(column).innerHTML = "r" + row + "c" + column
+    // }
+  }
 }
+
+function editTitle(row) {
+  dummyTitles[row] = row;
+}
+
 </script>
