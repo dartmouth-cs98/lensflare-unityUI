@@ -37,7 +37,8 @@
 }
 
 .sidebar {
-  background-color: #f0f0f0;
+  /*background-color: #f0f0f0;*/
+    background-color: #ffffff;
   position: absolute;
   width: 190px;
   border-right: 1px solid #0000b3;

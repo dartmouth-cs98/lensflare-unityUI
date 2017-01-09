@@ -49,12 +49,14 @@ function loadDatabase(museum) {
   headerRow.insertCell(2).innerHTML = "Text"
   for (var row = 1; row < 4; row++) {
     var rowV = table.insertRow(row);
-    rowV.insertCell(0).innerHTML = "<img width='auto' height='200px' src=\"image" + row + ".jpg\">"
-    rowV.insertCell(1).innerHTML = "<button class=\"edit-button\" type=\"button\" onclick=\"editTitle(" + (row - 1) + ")\">edit</button>" + museum.text + "<br />" + dummyTitles[row - 1];
-    rowV.insertCell(2).innerHTML = "<button class=\"edit-button\" type=\"button\" onclick=\"editText(" + (row - 1) + ")\">edit</button>" + museum.text + "<br />" + dummyText[row - 1];
+    rowV.insertCell(0).innerHTML = "<img width='auto' height='200px' src='image" + row + ".jpg'>"
+    rowV.insertCell(1).innerHTML = "<button class='edit-button' type='button' onclick='editTitle(" + (row - 1) + ")'>edit</button><br />" + dummyTitles[row - 1];
+    rowV.insertCell(2).innerHTML = "<button class='edit-button' type='button' onclick='editText(" + (row - 1) + ")'>edit</button><br />" + dummyText[row - 1];
+    //  + museum.text + "
 
 
     rowV.cells[0].style.backgroundColor = "#f0f0f0";
+    rowV.cells[1].style.width = "175px";
     rowV.cells[2].style.backgroundColor = "#f0f0f0";
 
     // for (var column = 0; column < 3; column++) {
@@ -64,7 +66,18 @@ function loadDatabase(museum) {
 }
 
 function editTitle(row) {
-  dummyTitles[row] = row;
+  var table = document.getElementById("db-table");
+  var cell = table.rows[row + 1].cells[1];
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='saveTitle(" + row + ")'>done</button><textarea class='input-text' rows='5' id='input-box' value=''>" + cell.innerText + "</textarea>";
+
+}
+
+function saveTitle(row) {
+  var table = document.getElementById("db-table");
+  var cell = table.rows[row + 1].cells[1];
+  var inputBox = document.getElementById('input-box')
+  dummyTitles[row] = inputBox.value;
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='editTitle(" + (row) + ")'>edit</button><br />" + dummyTitles[row];
 }
 
 </script>
