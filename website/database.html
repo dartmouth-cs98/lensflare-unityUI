@@ -50,8 +50,8 @@ function loadDatabase(museum) {
   for (var row = 1; row < 4; row++) {
     var rowV = table.insertRow(row);
     rowV.insertCell(0).innerHTML = "<img width='auto' height='200px' src='image" + row + ".jpg'>"
-    rowV.insertCell(1).innerHTML = "<button class='edit-button' type='button' onclick='editTitle(" + (row - 1) + ")'>edit</button><br />" + dummyTitles[row - 1];
-    rowV.insertCell(2).innerHTML = "<button class='edit-button' type='button' onclick='editText(" + (row - 1) + ")'>edit</button><br />" + dummyText[row - 1];
+    rowV.insertCell(1).innerHTML = "<button class='edit-button' type='button' onclick='edit(" + (row - 1) + "," + 1 + ")'>edit</button><br />" + dummyTitles[row - 1];
+    rowV.insertCell(2).innerHTML = "<button class='edit-button' type='button' onclick='edit(" + (row - 1) + "," + 2 + ")'>edit</button><br />" + dummyText[row - 1];
     //  + museum.text + "
 
 
@@ -65,19 +65,21 @@ function loadDatabase(museum) {
   }
 }
 
-function editTitle(row) {
+function edit(row, col) {
   var table = document.getElementById("db-table");
-  var cell = table.rows[row + 1].cells[1];
-  cell.innerHTML = "<button class='edit-button' type='button' onclick='saveTitle(" + row + ")'>done</button><textarea class='input-text' rows='5' id='input-box' value=''>" + cell.innerText + "</textarea>";
+  var cell = table.rows[row + 1].cells[col];
+  var startText = cell.innerText;
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='save(" + row + "," + col + ")'>done</button><textarea class='input-text' rows='5' id='input-box' value=''>" + startText.slice(4, startText.length) + "</textarea>";
 
 }
 
-function saveTitle(row) {
+function save(row, col) {
   var table = document.getElementById("db-table");
-  var cell = table.rows[row + 1].cells[1];
+  var cell = table.rows[row + 1].cells[col];
   var inputBox = document.getElementById('input-box')
   dummyTitles[row] = inputBox.value;
-  cell.innerHTML = "<button class='edit-button' type='button' onclick='editTitle(" + (row) + ")'>edit</button><br />" + dummyTitles[row];
+  dummyTitles[row].replace(/\n/g, "<br />")
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + dummyTitles[row];
 }
 
 </script>

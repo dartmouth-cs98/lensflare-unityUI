@@ -1,12 +1,12 @@
 .title {
   font-weight: 300;
-  color: #0000b3;
+  color: #4d6bff;
   font-size: 40px;
 }
 
 .museums-title {
   font-weight: 300;
-  color: #0000b3;
+  color: #4d6bff;
   font-size: 35px;
   padding-top: 15px;
   padding-bottom: 15px;
@@ -29,19 +29,19 @@
 }
 .db-title {
   font-weight: 300;
-  color: #0000b3;
+  color: #4d6bff;
   font-size: 25px;
   padding-bottom: 5px;
-  border-bottom: 1px solid #0000b3;
+  border-bottom: 1px solid #4d6bff;
   padding-left: 205px;
 }
 
 .sidebar {
   /*background-color: #f0f0f0;*/
     background-color: #ffffff;
-  position: absolute;
+  position: fixed;
   width: 190px;
-  border-right: 1px solid #0000b3;
+  border-right: 1px solid #4d6bff;
   height: 100%;
   top: 0px;
   padding-left: 5px;
@@ -75,10 +75,10 @@
 }
 
 .logout-button {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 203px;
-  background-color: #0000b3;
+  background-color: #4d6bff;
   color: white;
   text-align: center;
   left: 0;
@@ -95,15 +95,22 @@
   width: 100px;
   font-size: 12px;
   background-color: white;
-  border: 1px solid #0000b3;
+  border: 1px solid #4d6bff;
   border-radius: 5px;
   padding: 3px;
   /*transition-duration: 0.4s;*/
   /*-webkit-transition-duration: 0.4s;*/
 }
 
+.input-text {
+  font-family: 'Raleway', sans-serif;
+  width: 165px;
+  font-size: inherit;
+  white-space: pre-wrap;
+}
+
 .login-button:hover {
-  border: 2px solid #0000b3;
+  border: 2px solid #4d6bff;
 }
 
 .edit-button:hover {
