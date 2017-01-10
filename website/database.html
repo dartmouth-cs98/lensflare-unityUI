@@ -26,6 +26,8 @@ var dummyText = ["The T-Rex is a scary beast, it will eat you up and gobble you 
                 "The long neck giraffe beast is also pretty fucking scary but it's less terrifying that a T-Rex because it prob can't eat you whole or it would choke. It prob also only eats grass.",
                 "The Sphinx will ask you a very difficult riddle; if you are able to figure out the answer to the riddle then you can move on past her forboding glare and into the pyramid."]
 var startText= "";
+var currCellRow = -1;
+var currCellCol = -1
 
 function loadInit() {
   for (var museum in museums) {
@@ -66,12 +68,16 @@ function loadDatabase(museum) {
 }
 
 function edit(row, col) {
+  if (currCellRow != -1) {
+    cancel(currCellRow, currCellCol)
+  }
   var table = document.getElementById("db-table");
   var cell = table.rows[row + 1].cells[col];
   startText = cell.innerText;
   startText = startText.slice(4, startText.length);
   cell.innerHTML = "<button class='edit-button' type='button' onclick='save(" + row + "," + col + ")'>done</button> <button class='edit-button' type='button' onclick='cancel(" + row + "," + col + ")'>cancel</button><textarea class='input-text' rows='5' id='input-box' value=''>" + startText + "</textarea>";
-
+  currCellRow = row;
+  currCellCol = col;
 }
 
 function save(row, col) {
@@ -84,9 +90,9 @@ function save(row, col) {
 }
 
 function cancel(row, col) {
-    var table = document.getElementById("db-table");
-    var cell = table.rows[row + 1].cells[col];
-    cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + startText;
+  var table = document.getElementById("db-table");
+  var cell = table.rows[row + 1].cells[col];
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + startText;
 }
 
 function logout() {

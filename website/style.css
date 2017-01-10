@@ -18,8 +18,9 @@
   left: 50%;
   height: 205px;
   width: 300px;
-  margin-top: -100px;
-  margin-left: -150px;
+  margin-top: -105px;
+  margin-left: -160px;
+  line-height: 150%;
 }
 
 .db-content {
@@ -104,14 +105,17 @@
 
 .input-text {
   font-family: 'Raleway', sans-serif;
-  width: 165px;
-  /*width: auto;*/
+  width: 100%;
   font-size: inherit;
   white-space: pre-wrap;
+  border: 1px solid #dbe1ff;
+  border-radius: 4px;
+  resize: none;
 }
 
 .login-button:hover {
-  border: 2px solid #4d6bff;
+  /*border: 2px solid #4d6bff;*/
+  box-shadow: 0 2px 15px #dbe1ff;
 }
 
 .edit-button:hover {
