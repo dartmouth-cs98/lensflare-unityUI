@@ -28,11 +28,12 @@
 <script>
 
 function submit() {
-  checkPasswords()
-  checkName()
-  checkEmail()
-  checkUsername()
-  if (checkPasswords() && checkName() && checkEmail() && checkUsername()) {
+  document.getElementById("errors").innerHTML = ""
+  var pass = checkPasswords()
+  pass = checkName() && pass
+  pass = checkEmail() && pass
+  pass = checkUsername() && pass
+  if (pass) {
     document.getElementById("name").disabled = "disabled"
     document.getElementById("name").style.backgroundColor = "#f0f0f0"
     document.getElementById("email").disabled = "disabled"
@@ -62,6 +63,8 @@ function checkPasswords() {
     pass1.style.backgroundColor = "#ffcccc"
     return false;
   }
+  pass1.style.backgroundColor = "#ffffff"
+  pass2.style.backgroundColor = "#ffffff"
   return true;
 }
 
@@ -72,6 +75,7 @@ function checkName() {
     name.style.backgroundColor = "#ffcccc"
     return false;
   }
+  name.style.backgroundColor = "#ffffff"
   return true;
 }
 
@@ -82,6 +86,7 @@ function checkEmail() {
     email.style.backgroundColor = "#ffcccc"
     return false;
   }
+  email.style.backgroundColor = "#ffffff"
   return true;
 }
 
@@ -92,6 +97,7 @@ function checkUsername() {
     username.style.backgroundColor = "#ffcccc"
     return false;
   }
+  username.style.backgroundColor = "#ffffff"
   return true;
 }
 

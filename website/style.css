@@ -105,10 +105,12 @@
 
 .input-text {
   font-family: 'Raleway', sans-serif;
-  width: 165px;
-  /*width: auto;*/
+  width: 100%;
   font-size: inherit;
   white-space: pre-wrap;
+  border: 1px solid #dbe1ff;
+  border-radius: 4px;
+  resize: none;
 }
 
 .login-button:hover {
