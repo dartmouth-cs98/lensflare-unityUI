@@ -9,10 +9,9 @@
   <div id="sidebar" class="sidebar">
     <div class="museums-title">Lensflare</div>
   </div>
-  <div class="logout-button">
-    logout
-    <!-- <a href="index.html">logout</a> -->
-  </div>
+  <a style="cursor: pointer" onclick="logout()">
+    <div class="logout-button">logout</div>
+  </a>
   <div id="db-name" class="db-title"></div>
   <div id="content" class="db-content">
     <table id="db-table" class="db-table"></div>
@@ -26,10 +25,11 @@ var dummyTitles = ["T-Rex", "Long Neck Thing", "The Sphinx"]
 var dummyText = ["The T-Rex is a scary beast, it will eat you up and gobble you whole, without a second thought for your wellbeing or happiness.",
                 "The long neck giraffe beast is also pretty fucking scary but it's less terrifying that a T-Rex because it prob can't eat you whole or it would choke. It prob also only eats grass.",
                 "The Sphinx will ask you a very difficult riddle; if you are able to figure out the answer to the riddle then you can move on past her forboding glare and into the pyramid."]
+var startText= "";
 
 function loadInit() {
   for (var museum in museums) {
-    document.getElementById("sidebar").innerHTML += "<a onclick='loadDatabase(this)'>" + museums[museum] + "</a><br />"
+    document.getElementById("sidebar").innerHTML += "<a style='cursor: pointer;' onclick='loadDatabase(this)'>" + museums[museum] + "</a><br />"
   }
   var start = {};
   start.text = museums[0]
@@ -55,9 +55,9 @@ function loadDatabase(museum) {
     //  + museum.text + "
 
 
-    rowV.cells[0].style.backgroundColor = "#f0f0f0";
+    rowV.cells[0].style.backgroundColor = "#f0f0ff";
     rowV.cells[1].style.width = "175px";
-    rowV.cells[2].style.backgroundColor = "#f0f0f0";
+    rowV.cells[2].style.backgroundColor = "#f0f0ff";
 
     // for (var column = 0; column < 3; column++) {
     //   rowV.insertCell(column).innerHTML = "r" + row + "c" + column
@@ -68,8 +68,9 @@ function loadDatabase(museum) {
 function edit(row, col) {
   var table = document.getElementById("db-table");
   var cell = table.rows[row + 1].cells[col];
-  var startText = cell.innerText;
-  cell.innerHTML = "<button class='edit-button' type='button' onclick='save(" + row + "," + col + ")'>done</button><textarea class='input-text' rows='5' id='input-box' value=''>" + startText.slice(4, startText.length) + "</textarea>";
+  startText = cell.innerText;
+  startText = startText.slice(4, startText.length);
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='save(" + row + "," + col + ")'>done</button> <button class='edit-button' type='button' onclick='cancel(" + row + "," + col + ")'>cancel</button><textarea class='input-text' rows='5' id='input-box' value=''>" + startText + "</textarea>";
 
 }
 
@@ -80,6 +81,17 @@ function save(row, col) {
   dummyTitles[row] = inputBox.value;
   dummyTitles[row].replace(/\n/g, "<br />")
   cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + dummyTitles[row];
+}
+
+function cancel(row, col) {
+    var table = document.getElementById("db-table");
+    var cell = table.rows[row + 1].cells[col];
+    cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + startText;
+}
+
+function logout() {
+  window.location.href = "index.html"
+  window.alert("Logout successful");
 }
 
 </script>
