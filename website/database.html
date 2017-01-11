@@ -27,7 +27,8 @@ var dummyText = ["The T-Rex is a scary beast, it will eat you up and gobble you 
                 "The Sphinx will ask you a very difficult riddle; if you are able to figure out the answer to the riddle then you can move on past her forboding glare and into the pyramid."]
 var startText= "";
 var currCellRow = -1;
-var currCellCol = -1
+var currCellCol = -1;
+var active = false;
 
 function loadInit() {
   for (var museum in museums) {
@@ -71,6 +72,7 @@ function edit(row, col) {
   if (currCellRow != -1) {
     cancel(currCellRow, currCellCol)
   }
+  active = true;
   var table = document.getElementById("db-table");
   var cell = table.rows[row + 1].cells[col];
   startText = cell.innerText;
@@ -81,6 +83,7 @@ function edit(row, col) {
 }
 
 function save(row, col) {
+  active = false;
   var table = document.getElementById("db-table");
   var cell = table.rows[row + 1].cells[col];
   var inputBox = document.getElementById('input-box')
@@ -92,7 +95,7 @@ function save(row, col) {
 function cancel(row, col) {
   var table = document.getElementById("db-table");
   var cell = table.rows[row + 1].cells[col];
-  cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + startText;
+  if (active) cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + startText;
 }
 
 function logout() {
