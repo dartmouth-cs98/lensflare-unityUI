@@ -1,1 +1,32 @@
-Hello
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link href="style.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,900" rel="stylesheet">
+</head>
+
+
+
+<body>
+  <div class="login-box" id="login-box">
+    <div class="title">Lensflare</div>
+    <br />
+    <!-- <form action="/login"> -->
+      Username:<br /><input class="text-box" type="text"></input><br />
+      Password:<br /><input class="text-box" type="password"></input>
+      <br />
+      <br />
+      <button class="login-button" type="button" onclick="submit()">Submit</button><br /><br />
+    <!-- </form> -->
+    <a href="signup.html" style="font-size:11px; text-decoration:none; color:black;">create an account</a>
+  </div>
+</body>
+
+
+<script>
+
+function submit() {
+  window.location.href = "database.html"
+}
+
+</script>
