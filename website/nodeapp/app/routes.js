@@ -4,7 +4,11 @@ module.exports = function(app, passport) {
     res.render('index.ejs');
   });
 
-  // app.post('/login', do passport stuff);
+  app.post('/', passport.authenticate('local-login', {
+    successRedirect: '/database',
+    failureRedirect: '/',
+    failureFlash: true
+  }));
 
   app.get('/signup', function(req, res) {
     res.render('signup.ejs', { message: req.flash('signupMessage') });
