@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link href="style.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,900" rel="stylesheet">
+</head>
+
+
+
+<body>
+  <div class="login-box" style="margin-top:-200px" id="login-box">
+    <div class="title">Create account</div>
+    <br />
+    Name*<br /><input class="text-box" id="name" type="text"></input><br />
+    Email*<br /><input class="text-box" id="email" type="text"></input>
+    Username*<br /><input class="text-box" id="username" type="text"></input><br />
+    Password*<br /><input class="text-box" id="pass1" type="password"></input>
+    Re-enter password*<br /><input class="text-box" id="pass2" type="password"></input>
+    <br />
+    <br />
+    <button class="login-button" type="button" onclick="submit()">Create</button><br />
+    <br />
+    <div id="errors" style="color:red; font-size:12px;"></div>
+    <div id="success" style="color:green; font-size:12px;"></div>
+  </div>
+</body>
+
+<script>
+
+function submit() {
+  document.getElementById("errors").innerHTML = ""
+  var pass = checkPasswords()
+  pass = checkName() && pass
+  pass = checkEmail() && pass
+  pass = checkUsername() && pass
+  if (pass) {
+    document.getElementById("name").disabled = "disabled"
+    document.getElementById("name").style.backgroundColor = "#f0f0f0"
+    document.getElementById("email").disabled = "disabled"
+    document.getElementById("email").style.backgroundColor = "#f0f0f0"
+    document.getElementById("username").disabled = "disabled"
+    document.getElementById("username").style.backgroundColor = "#f0f0f0"
+    document.getElementById("pass1").disabled = "disabled"
+    document.getElementById("pass1").style.backgroundColor = "#f0f0f0"
+    document.getElementById("pass2").disabled = "disabled"
+    document.getElementById("pass2").style.backgroundColor = "#f0f0f0"
+    document.getElementById("errors").innerHTML = ""
+    document.getElementById("success").innerHTML = "Account creation request sent - it will be approved within 2-3 days."
+  }
+}
+
+function checkPasswords() {
+  var pass1 = document.getElementById("pass1");
+  var pass2 = document.getElementById("pass2");
+  if (pass1.value != pass2.value) {
+    document.getElementById("errors").innerHTML += "Passwords do not match. Try again.<br />"
+    pass1.style.backgroundColor = "#ffcccc"
+    pass2.style.backgroundColor = "#ffcccc"
+    return false;
+  }
+  else if (pass1.value.length < 9) {
+    document.getElementById("errors").innerHTML += "Password is not long enough. Please enter a password longer than 8 characters.<br />"
+    pass1.style.backgroundColor = "#ffcccc"
+    return false;
+  }
+  pass1.style.backgroundColor = "#ffffff"
+  pass2.style.backgroundColor = "#ffffff"
+  return true;
+}
+
+function checkName() {
+  var name = document.getElementById("name");
+  if (name.value.length < 3) {
+    document.getElementById("errors").innerHTML += "Name must be at least 2 characters. Try again.<br />"
+    name.style.backgroundColor = "#ffcccc"
+    return false;
+  }
+  name.style.backgroundColor = "#ffffff"
+  return true;
+}
+
+function checkEmail() {
+  var email = document.getElementById("email");
+  if (email.value.length == 0) {
+    document.getElementById("errors").innerHTML += "Please enter your email address.<br />"
+    email.style.backgroundColor = "#ffcccc"
+    return false;
+  }
+  email.style.backgroundColor = "#ffffff"
+  return true;
+}
+
+function checkUsername() {
+  var username = document.getElementById("username");
+  if (username.value.length == 0) {
+    document.getElementById("errors").innerHTML += "Please enter a username.<br />"
+    username.style.backgroundColor = "#ffcccc"
+    return false;
+  }
+  username.style.backgroundColor = "#ffffff"
+  return true;
+}
+
+</script>
