@@ -1,0 +1,118 @@
+<!-- <p>
+    <strong>id</strong>: <%= user._id %><br>
+    <strong>name</strong>: <%= user.local.name %><br>
+    <strong>email</strong>: <%= user.local.email %><br>
+    <strong>username</strong>: <%= user.local.username %><br>
+    <strong>password</strong>: <%= user.local.password %>
+</p> -->
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link href="style.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,900" rel="stylesheet">
+</head>
+
+<body onload="loadInit()">
+  <div id="sidebar" class="sidebar">
+    <div class="museums-title">Lensflare</div>
+    Welcome, <%= user.local.name %><br /><br />
+  </div>
+  <!-- <a style="cursor: pointer" onclick="logout()"> -->
+  <div class="logout-button"><form action="/logout" method="get">
+    <button class="logout" type="submit" value="logout">logout</button>
+  </form></div>
+  <!-- </a> -->
+  <div id="db-name" class="db-title"></div>
+  <div id="content" class="db-content">
+    <table id="db-table" class="db-table"></div>
+  </div>
+</body>
+
+
+<script>
+var museums = ["The MoMA", "Dallas Museum of Art", "DALI Lab"]
+var dummyTitles = ["T-Rex", "Long Neck Thing", "The Sphinx"]
+var dummyText = ["The T-Rex is a scary beast, it will eat you up and gobble you whole, without a second thought for your wellbeing or happiness.",
+                "The long neck giraffe beast is also pretty fucking scary but it's less terrifying that a T-Rex because it prob can't eat you whole or it would choke. It prob also only eats grass.",
+                "The Sphinx will ask you a very difficult riddle; if you are able to figure out the answer to the riddle then you can move on past her forboding glare and into the pyramid."]
+var startText= "";
+var currCellRow = -1;
+var currCellCol = -1;
+var active = false;
+
+function loadInit() {
+  for (var museum in museums) {
+    document.getElementById("sidebar").innerHTML += "<a style='cursor: pointer;' onclick='loadDatabase(this)'>" + museums[museum] + "</a><br />"
+  }
+  var start = {};
+  start.text = museums[0]
+  document.getElementById("db-name").innerHTML = museums[0]
+  loadDatabase(start)
+}
+
+function loadDatabase(museum) {
+  document.getElementById("db-name").innerHTML = museum.text
+
+  document.getElementById("db-table").innerHTML = "";
+  var table = document.getElementById("db-table");
+  var header = table.createTHead();
+  var headerRow = header.insertRow(0);
+  headerRow.insertCell(0).innerHTML = "Image"
+  headerRow.insertCell(1).innerHTML = "Title"
+  headerRow.insertCell(2).innerHTML = "Text"
+  for (var row = 1; row < 4; row++) {
+    var rowV = table.insertRow(row);
+    rowV.insertCell(0).innerHTML = "<img width='auto' height='200px' src='image" + row + ".jpg'>"
+    rowV.insertCell(1).innerHTML = "<button class='edit-button' type='button' onclick='edit(" + (row - 1) + "," + 1 + ")'>edit</button><br />" + dummyTitles[row - 1];
+    rowV.insertCell(2).innerHTML = "<button class='edit-button' type='button' onclick='edit(" + (row - 1) + "," + 2 + ")'>edit</button><br />" + dummyText[row - 1];
+    //  + museum.text +  "
+
+
+    rowV.cells[0].style.backgroundColor = "#f0f0ff";
+    rowV.cells[1].style.width = "175px";
+    rowV.cells[2].style.backgroundColor = "#f0f0ff";
+
+    // for (var column = 0; column < 3; column++) {
+    //   rowV.insertCell(column).innerHTML = "r" + row + "c" + column
+    // }
+  }
+}
+
+function edit(row, col) {
+  if (currCellRow != -1) {
+    cancel(currCellRow, currCellCol)
+  }
+  active = true;
+  var table = document.getElementById("db-table");
+  var cell = table.rows[row + 1].cells[col];
+  startText = cell.innerText;
+  startText = startText.slice(4, startText.length);
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='save(" + row + "," + col + ")'>done</button> <button class='edit-button' type='button' onclick='cancel(" + row + "," + col + ")'>cancel</button><textarea class='input-text' rows='5' id='input-box' value=''>" + startText + "</textarea>";
+  currCellRow = row;
+  currCellCol = col;
+}
+
+function save(row, col) {
+  active = false;
+  var table = document.getElementById("db-table");
+  var cell = table.rows[row + 1].cells[col];
+  var inputBox = document.getElementById('input-box')
+  dummyTitles[row] = inputBox.value;
+  dummyTitles[row].replace(/\n/g, "<br />")
+  cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + dummyTitles[row];
+}
+
+function cancel(row, col) {
+  var table = document.getElementById("db-table");
+  var cell = table.rows[row + 1].cells[col];
+  if (active) cell.innerHTML = "<button class='edit-button' type='button' onclick='edit(" + row + "," + col + ")'>edit</button><br />" + startText;
+}
+
+// function logout() {
+//   window.location.href = "index.html"
+//   window.alert("Logout successful");
+// }
+
+</script>

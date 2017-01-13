@@ -9,22 +9,18 @@
   <div class="login-box" id="login-box">
     <div class="title">Lensflare</div>
     <br />
-    <form action="/login">
-      Username:<br /><input class="text-box" type="text"></input><br />
-      Password:<br /><input class="text-box" type="password"></input>
+    <form action="/" method="post">
+      Email:<br /><input class="text-box" name="email" type="text"></input><br />
+      Password:<br /><input class="text-box" name="password" type="password"></input>
       <br />
+      <div style="color:red; font-size:12px">
+        <% if (message.length > 0) { %>
+          <%= message %>
+        <% } %>
+      </div>
       <br />
-      <button class="login-button" type="button" onclick="submit()">Submit</button><br /><br />
+      <button class="login-button" type="submit">Submit</button><br /><br />
     </form>
     <a href="signup" style="font-size:11px; text-decoration:none; color:black;">create an account</a>
   </div>
 </body>
-
-
-<script>
-
-function submit() {
-  window.location.href = "database.html"
-}
-
-</script>
