@@ -11,9 +11,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
-// var configDB = require('./db/database.js');
+var configDB = require('./db/database.js');
 
-// mongoose.connect(configDB.url);
+mongoose.connect(configDB.url);
 
 require('./config/passport')(passport);
 

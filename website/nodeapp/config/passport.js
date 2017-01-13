@@ -14,7 +14,8 @@ module.exports = function(passport) {
   });
 
   passport.use('local-signup', new LocalStrategy({
-    usernameField: 'email',
+    nameField: 'name',
+    emailField: 'email',
     passwordField: 'password',
     passReqToCallback: true
   },
@@ -26,8 +27,10 @@ module.exports = function(passport) {
         if (user) {
           return done(null, false, req.flash('signupMessage', 'That email is already being used for a user account.'));
         }
+
         else {
           var newUser = new User();
+          newUser.local.name = req.param('name');
           newUser.local.email = email;
           newUser.local.password = newUser.generateHash(password);
 
