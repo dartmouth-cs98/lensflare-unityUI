@@ -67,7 +67,7 @@ function loadDatabase(museum) {
     rowV.insertCell(0).innerHTML = "<img width='auto' height='200px' src='image" + row + ".jpg'>"
     rowV.insertCell(1).innerHTML = "<button class='edit-button' type='button' onclick='edit(" + (row - 1) + "," + 1 + ")'>edit</button><br />" + dummyTitles[row - 1];
     rowV.insertCell(2).innerHTML = "<button class='edit-button' type='button' onclick='edit(" + (row - 1) + "," + 2 + ")'>edit</button><br />" + dummyText[row - 1];
-    //  + museum.text + "
+    //  + museum.text +  "
 
 
     rowV.cells[0].style.backgroundColor = "#f0f0ff";
