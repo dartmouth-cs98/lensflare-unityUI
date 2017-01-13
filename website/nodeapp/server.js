@@ -18,6 +18,7 @@ mongoose.connect(configDB.url);
 require('./config/passport')(passport);
 
 app.use(express.static(__dirname + '/style'));
+app.use(express.static(__dirname + '/assets'));
 
 app.use(morgan('dev'));
 app.use(cookieParser());
