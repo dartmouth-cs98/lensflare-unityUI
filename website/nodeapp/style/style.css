@@ -23,6 +23,15 @@
   line-height: 150%;
 }
 
+.logout {
+  background-color: inherit;
+  border: none;
+  font-family: 'Raleway', sans-serif;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+}
+
 .db-content {
   padding-top: 15px;
   padding-left: 205px;

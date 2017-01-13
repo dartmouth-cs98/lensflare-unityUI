@@ -17,12 +17,13 @@
 <body onload="loadInit()">
   <div id="sidebar" class="sidebar">
     <div class="museums-title">Lensflare</div>
-    Welcome, <%= user.local.name %><br />Choose one of your museums:<br />
+    Welcome, <%= user.local.name %><br /><br />
   </div>
-  <a style="cursor: pointer" action="/logout" nethod="post">
-    <!-- onclick="logout()"> -->
-    <div class="logout-button">logout</div>
-  </a>
+  <!-- <a style="cursor: pointer" onclick="logout()"> -->
+  <div class="logout-button"><form action="/logout" method="get">
+    <button class="logout" type="submit" value="logout">logout</button>
+  </form></div>
+  <!-- </a> -->
   <div id="db-name" class="db-title"></div>
   <div id="content" class="db-content">
     <table id="db-table" class="db-table"></div>
