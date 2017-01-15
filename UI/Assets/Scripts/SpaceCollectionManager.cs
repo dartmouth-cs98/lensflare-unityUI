@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Academy.HoloToolkit.Unity;
+using HoloToolkit.Unity;
 
 /// <summary>
 /// Called by PlaySpaceManager after planes have been generated from the Spatial Mapping Mesh.

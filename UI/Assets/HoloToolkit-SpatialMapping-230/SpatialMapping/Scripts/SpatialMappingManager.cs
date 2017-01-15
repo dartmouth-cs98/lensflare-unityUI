@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using HoloToolkit.Unity;
 
 #if UNITY_EDITOR
 using UnityEditor;

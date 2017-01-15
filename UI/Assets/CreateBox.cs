@@ -9,13 +9,13 @@ namespace Academy.HoloToolkit.Unity
     public class CreateBox : MonoBehaviour
     {
         GameObject wireframe;
-        WorldAnchorStore store;
+        //WorldAnchorStore store;
         List<GameObject> anchors;
 
         // Use this for initialization
         void Start()
         {
-            WorldAnchorStore.GetAsync(AnchorStoreLoaded);
+            //WorldAnchorStore.GetAsync(AnchorStoreLoaded);
 
             anchors = new List<GameObject>();
 
@@ -36,18 +36,19 @@ namespace Academy.HoloToolkit.Unity
             }
         }
 
-        private void AnchorStoreLoaded(WorldAnchorStore store)
-        {
-            this.store = store;
+        //private void AnchorStoreLoaded(WorldAnchorStore store)
+        //{
+        //    this.store = store;
 
-            string[] anchorIds = this.store.GetAllIds();
-            for (int i = 0; i < anchorIds.Length; i++)
-            {
-                
-            }
+        //    string[] anchorIds = this.store.GetAllIds();
+        //    for (int i = 0; i < anchorIds.Length; i++)
+        //    {
+        //        print("ANCHOR");
+        //        Debug.Log(anchorIds[i]);
+        //    }
 
 
-        }
+        //}
     }
 
 }

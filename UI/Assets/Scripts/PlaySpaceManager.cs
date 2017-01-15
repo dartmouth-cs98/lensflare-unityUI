@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 using Academy.HoloToolkit.Unity;
+using HoloToolkit.Unity;
 
 /// <summary>
 /// The SurfaceManager class allows applications to scan the environment for a specified amount of time 
