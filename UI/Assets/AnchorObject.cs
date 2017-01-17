@@ -3,20 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VR.WSA.Persistence;
 using UnityEngine.VR.WSA;
+using UnityEngine.Windows.Speech;
+using System.Linq;
 
 
 public class AnchorObject : MonoBehaviour
 {
 
     WorldAnchorStore store;
-    public string iconName = "iconName";
+    public string iconName;
     public bool savedRoot = false;
+
+    KeywordRecognizer keywordRecognizer = null;
+    Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
 
     // Use this for initialization
     void Start()
     {
         print("Start POS:" + gameObject.transform.position);
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
+
+        // Testing purposes
+        keywords.Add("Move", () =>
+        {
+            print("moved");
+            MoveAnchor(new Vector3(0.2f, 0.5f, 1.2f));
+        });
+
+        keywords.Add("Clear", () =>
+        {
+            print("cleared");
+            this.store.Clear();
+        });
+
+        keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
+
+        // Register a callback for the KeywordRecognizer and start recognizing!
+        keywordRecognizer.OnPhraseRecognized += KeywordRecognizer_OnPhraseRecognized;
+        keywordRecognizer.Start();
+    }
+
+    // Testing
+    private void KeywordRecognizer_OnPhraseRecognized(PhraseRecognizedEventArgs args)
+    {
+        System.Action keywordAction;
+        if (keywords.TryGetValue(args.text, out keywordAction))
+        {
+            keywordAction.Invoke();
+        }
     }
 
     // Update is called once per frame
@@ -26,6 +60,12 @@ public class AnchorObject : MonoBehaviour
         {
             print("F pressed");
             MoveAnchor(new Vector3(0.2f, 0.5f, 1.2f));
+            print("moved to:" + gameObject.transform.position.ToString());
+        }
+        if (Input.GetKeyDown("g"))
+        {
+            print("G pressed");
+            MoveAnchor(new Vector3(0.4f, 0.5f, 1.2f));
             print("moved to:" + gameObject.transform.position.ToString());
         }
 
@@ -42,25 +82,22 @@ public class AnchorObject : MonoBehaviour
         if (!this.savedRoot)
         {
             print("Saving root");
-  
+
             WorldAnchor anchor = gameObject.GetComponent<WorldAnchor>();
             if (anchor == null)
             {
                 print("Anchor is null");
                 anchor = gameObject.AddComponent<WorldAnchor>();
-                anchor.transform.position = new Vector3(0.3f, 0.3f, 1.1f);
-                //if (anchor.isLocated)
-                //{
-                print("position of first saved anchor:" + anchor.transform.position);
-                this.store.Save(iconName, anchor);
 
-                    
-                print("loaded position save: " + this.store.Load(iconName, gameObject).transform.position);
-                //}
-                //else
-                //{
-                //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
-                //}
+                if (anchor.isLocated)
+                {
+                    print("position of first saved anchor:" + anchor.transform.position);
+                    this.store.Save(iconName, anchor);
+                }
+                else
+                {
+                    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
+                }
             }
 
         }
@@ -68,28 +105,28 @@ public class AnchorObject : MonoBehaviour
 
     private void MoveAnchor(Vector3 vect)
     {
-        this.store.Delete(iconName);
-        DestroyImmediate(gameObject.GetComponent<WorldAnchor>());
 
-        print("deleted anchor count:" + this.store.anchorCount);
-        
-
-        gameObject.transform.position = vect;
-        WorldAnchor anchor = gameObject.AddComponent<WorldAnchor>();
-        print("new anchor position: " + anchor.transform.position);
-        if (anchor.isLocated)
+        if (gameObject.GetComponent<WorldAnchor>() == null)
         {
-            this.savedRoot = this.store.Save(iconName, anchor);
-
-            print("loaded position: " + this.store.Load(iconName, gameObject).transform.position);
-            print("new saved anchor count:" + this.store.anchorCount);
+            gameObject.transform.position = vect;
+            SaveAnchor();
         }
         else
         {
-            anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
-        }
+            this.store.Delete(iconName);
+            DestroyImmediate(gameObject.GetComponent<WorldAnchor>());
 
-        
+            gameObject.transform.position = vect;
+            WorldAnchor anchor = gameObject.AddComponent<WorldAnchor>();
+            if (anchor.isLocated)
+            {
+                this.savedRoot = this.store.Save(iconName, anchor);
+            }
+            else
+            {
+                anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
+            }
+        }
     }
 
     private void AnchorStoreLoaded(WorldAnchorStore store)
@@ -106,7 +143,7 @@ public class AnchorObject : MonoBehaviour
                 print("loaded anchor position: " + anchor.transform.position);
                 this.savedRoot = true;
                 break;
-                
+
             }
         }
 
@@ -117,10 +154,5 @@ public class AnchorObject : MonoBehaviour
     private void Anchor_OnTrackingChanged(WorldAnchor anchor, bool located)
     {
         anchor.gameObject.SetActive(located);
-        //if (located)
-        //{
-        //    this.store.Save(iconName, anchor);
-        //    anchor.OnTrackingChanged -= Anchor_OnTrackingChanged;
-        //}
     }
 }

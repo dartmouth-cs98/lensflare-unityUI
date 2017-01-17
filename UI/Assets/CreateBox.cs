@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.VR.WSA.Persistence;
-using UnityEngine.VR.WSA;
 
 namespace Academy.HoloToolkit.Unity
 {
@@ -29,26 +27,21 @@ namespace Academy.HoloToolkit.Unity
             Vector3 vect = new Vector3(GazeManager.Instance.HitInfo.point.x, GazeManager.Instance.HitInfo.point.y, GazeManager.Instance.HitInfo.point.z);
             wireframe.transform.position = vect;
 
-            if (Input.GetButtonDown("x360_A"))
-            {
-                GameObject icon = Instantiate(Resources.Load("IconPrefabWire")) as GameObject;
-                icon.transform.position = vect;
-            }
+            //if (Input.GetButtonDown("x360_A"))
+            //{
+            //    PlaceBox(vect);
+            //}
         }
 
-        //private void AnchorStoreLoaded(WorldAnchorStore store)
-        //{
-        //    this.store = store;
-
-        //    string[] anchorIds = this.store.GetAllIds();
-        //    for (int i = 0; i < anchorIds.Length; i++)
-        //    {
-        //        print("ANCHOR");
-        //        Debug.Log(anchorIds[i]);
-        //    }
-
-
-        //}
+        public void PlaceBox(Vector3 vect)
+        {
+            GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
+            AnchorObject ao = icon.GetComponent<AnchorObject>();
+            print(icon);
+            ao.iconName = "icon_" + System.DateTime.Now;
+            print("instantiating " + ao.iconName);
+            ao.transform.position = vect;
+        }
     }
 
 }
