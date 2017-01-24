@@ -55,7 +55,7 @@ namespace Academy.HoloToolkit.Unity
                 Vector3 vect = new Vector3(GazeManager.Instance.HitInfo.point.x, GazeManager.Instance.HitInfo.point.y, GazeManager.Instance.HitInfo.point.z);
 
                 print(focusedObject);
-                gameObject.GetComponent<CreateBox>().PlaceBox(vect);//SendMessage("OnAirTapped", SendMessageOptions.RequireReceiver);
+                gameObject.GetComponent<IconManager>().PlaceBox(vect);//SendMessage("OnAirTapped", SendMessageOptions.RequireReceiver);
             }
         }
 

@@ -21,6 +21,6 @@ public class GestureHandler : Singleton<GestureHandler>
     void OnAirTapped()
     {
         Vector3 vect = new Vector3(GazeManager.Instance.HitInfo.point.x, GazeManager.Instance.HitInfo.point.y, GazeManager.Instance.HitInfo.point.z);
-        cb.PlaceBox(vect);
+      //  cb.PlaceBox(vect);
     }
 }

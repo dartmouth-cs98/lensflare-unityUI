@@ -26,21 +26,15 @@ namespace Academy.HoloToolkit.Unity
         {
             Vector3 vect = new Vector3(GazeManager.Instance.HitInfo.point.x, GazeManager.Instance.HitInfo.point.y, GazeManager.Instance.HitInfo.point.z);
             wireframe.transform.position = vect;
-
-            //if (Input.GetButtonDown("x360_A"))
-            //{
-            //    PlaceBox(vect);
-            //}
         }
 
-        public void PlaceBox(Vector3 vect)
-        {
-            GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
-            AnchorObject ao = icon.GetComponent<AnchorObject>();
-            ao.iconName = "icon-" + System.DateTime.Now.ToString("MM-dd-yy-H-mm-ss-fff");
-            print("instantiating " + ao.iconName);
-            ao.transform.position = vect;
-        }
+        //public void PlaceBox(Vector3 vect)
+        //{
+        //    GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
+        //    AnchorObject ao = icon.GetComponent<AnchorObject>();
+        //    ao.iconName = "icon-" + System.DateTime.Now.ToString("MM-dd-yy-H-mm-ss-fff");
+        //    print("instantiating " + ao.iconName);
+        //    ao.transform.position = vect;
+        //}
     }
-
 }
