@@ -21,6 +21,7 @@ public class AnchorObject : MonoBehaviour
     void Start()
     {
         print("Start POS:" + gameObject.transform.position);
+        print("icon name is " + iconName);
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
 
         // Testing purposes
@@ -79,25 +80,25 @@ public class AnchorObject : MonoBehaviour
 
     private void SaveAnchor()
     {
-        if (!this.savedRoot)
+        //if (!this.savedRoot)
         {
             print("Saving root");
 
             WorldAnchor anchor = gameObject.GetComponent<WorldAnchor>();
+            print("anchor label: " + anchor);
             if (anchor == null)
             {
-                print("Anchor is null");
                 anchor = gameObject.AddComponent<WorldAnchor>();
 
-                if (anchor.isLocated)
-                {
-                    print("position of first saved anchor:" + anchor.transform.position);
+                //if (anchor.isLocated)
+                //{
+                    print("saving :" + iconName);
                     this.store.Save(iconName, anchor);
-                }
-                else
-                {
-                    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
-                }
+                //}
+                //else
+                //{
+                //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
+                //}
             }
 
         }
@@ -120,6 +121,7 @@ public class AnchorObject : MonoBehaviour
             WorldAnchor anchor = gameObject.AddComponent<WorldAnchor>();
             if (anchor.isLocated)
             {
+                print("saving :" + iconName);
                 this.savedRoot = this.store.Save(iconName, anchor);
             }
             else
@@ -134,20 +136,20 @@ public class AnchorObject : MonoBehaviour
         this.store = store;
 
         string[] anchorIds = this.store.GetAllIds();
+        print(anchorIds.Length);
         for (int i = 0; i < anchorIds.Length; i++)
         {
+            print("anchor #:" + anchorIds[i]);
             if (anchorIds[i] == iconName)
             {
-                print("Found iconName");
+                print("Found " + iconName);
                 WorldAnchor anchor = this.store.Load(anchorIds[i], gameObject);
                 print("loaded anchor position: " + anchor.transform.position);
                 this.savedRoot = true;
                 break;
-
             }
         }
 
-        print("loaded pos:" + gameObject.transform.position.ToString());
         SaveAnchor();
     }
 

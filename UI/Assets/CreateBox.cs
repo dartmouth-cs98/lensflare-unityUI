@@ -37,8 +37,7 @@ namespace Academy.HoloToolkit.Unity
         {
             GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
             AnchorObject ao = icon.GetComponent<AnchorObject>();
-            print(icon);
-            ao.iconName = "icon_" + System.DateTime.Now;
+            ao.iconName = "icon-" + System.DateTime.Now.ToString("MM-dd-yy-H-mm-ss-fff");
             print("instantiating " + ao.iconName);
             ao.transform.position = vect;
         }
