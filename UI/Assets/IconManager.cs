@@ -65,11 +65,13 @@ public class IconManager : MonoBehaviour {
             {
                 anchor = go.AddComponent<WorldAnchor>();
 
+                // Adding makes anchoring fail on hololens
+
                 //if (anchor.isLocated)
                 //{
-                    print("saving :" + iconName);
+                    print("saving :" + iconName + " @" +anchor.transform.position);
                     this.store.Save(iconName, anchor);
-              //  }
+               // }
                 //else
                 //{
                 //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
@@ -93,15 +95,16 @@ public class IconManager : MonoBehaviour {
 
             go.transform.position = vect;
             WorldAnchor anchor = go.AddComponent<WorldAnchor>();
-            if (anchor.isLocated)
-            {
+
+            //if (anchor.isLocated)
+            //{
                 print("saving :" + iconName);
                 this.store.Save(iconName, anchor);
-            }
-            else
-            {
-                anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
-            }
+            //}
+            //else
+            //{
+            //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
+            //}
         }
     }
 
