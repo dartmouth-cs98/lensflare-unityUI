@@ -56,7 +56,7 @@ public class IconManager : MonoBehaviour {
         }
     }
 
-    public void SaveAnchor(string iconName, GameObject go)
+    public void SaveAnchor(GameObject go)
     {
         {
             WorldAnchor anchor = go.GetComponent<WorldAnchor>();
@@ -69,8 +69,8 @@ public class IconManager : MonoBehaviour {
 
                 //if (anchor.isLocated)
                 //{
-                    print("saving :" + iconName + " @" +anchor.transform.position);
-                    this.store.Save(iconName, anchor);
+                    print("saving :" + go.GetComponent<IconInfo>().iconName + " @" +anchor.transform.position);
+                    this.store.Save(go.GetComponent<IconInfo>().iconName, anchor);
                // }
                 //else
                 //{
@@ -80,43 +80,51 @@ public class IconManager : MonoBehaviour {
         }
     }
 
-    private void MoveAnchor(string iconName, GameObject go, Vector3 vect)
+    //public void MoveAnchor(string iconName, GameObject go, Vector3 vect)
+    //{
+
+    //    if (go.GetComponent<WorldAnchor>() == null)
+    //    {
+    //        go.transform.position = vect;
+    //        SaveAnchor(iconName, go);
+    //    }
+    //    else
+    //    {
+           
+
+    //        go.transform.position = vect;
+    //        WorldAnchor anchor = go.AddComponent<WorldAnchor>();
+
+    //        //if (anchor.isLocated)
+    //        //{
+    //            print("saving :" + iconName);
+    //            this.store.Save(iconName, anchor);
+    //        //}
+    //        //else
+    //        //{
+    //        //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
+    //        //}
+    //    }
+    //}
+
+    public void DeleteAnchor(GameObject go)
     {
-
-        if (go.GetComponent<WorldAnchor>() == null)
-        {
-            go.transform.position = vect;
-            SaveAnchor(iconName, go);
-        }
-        else
-        {
-            this.store.Delete(iconName);
-            DestroyImmediate(go.GetComponent<WorldAnchor>());
-
-            go.transform.position = vect;
-            WorldAnchor anchor = go.AddComponent<WorldAnchor>();
-
-            //if (anchor.isLocated)
-            //{
-                print("saving :" + iconName);
-                this.store.Save(iconName, anchor);
-            //}
-            //else
-            //{
-            //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
-            //}
-        }
+        this.store.Delete(go.GetComponent<IconInfo>().iconName);
+        DestroyImmediate(go.GetComponent<WorldAnchor>());
     }
 
     public void PlaceBox(Vector3 vect)
     {
-        GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
+        
+        GameObject icon = Instantiate(Resources.Load("GemPrefab/Prefab/GemParticleWorking")) as GameObject;
+        print("ICON" + icon);
         icon.transform.position = vect;
 
         string iconName = "icon_" + System.DateTime.Now.ToString("MMddyyHmmssfff");
+        icon.GetComponent<IconInfo>().iconName = iconName;
         print("instantiating " + iconName + " at " + vect);
 
-        SaveAnchor(iconName, icon);
+        SaveAnchor(icon);
     }
 
     private void AnchorStoreLoaded(WorldAnchorStore store)
@@ -130,6 +138,7 @@ public class IconManager : MonoBehaviour {
         {
             print("anchor #:" + anchorIds[i]);
             GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
+            icon.GetComponent<IconInfo>().iconName = anchorIds[i];
             WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
             
             // Manually set location?

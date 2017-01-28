@@ -17,24 +17,18 @@ namespace Academy.HoloToolkit.Unity
 
             anchors = new List<GameObject>();
 
-            wireframe = Instantiate(Resources.Load("IconPrefabWireframe")) as GameObject;
+            wireframe = Instantiate(Resources.Load("GemPrefab/Prefab/GemParticleWorking")) as GameObject;
             wireframe.layer = 2;
         }
 
         // Update is called once per frame
         void Update()
         {
-            Vector3 vect = new Vector3(GazeManager.Instance.HitInfo.point.x, GazeManager.Instance.HitInfo.point.y, GazeManager.Instance.HitInfo.point.z);
-            wireframe.transform.position = vect;
-        }
+            RaycastHit hit = GazeManager.Instance.HitInfo;
 
-        //public void PlaceBox(Vector3 vect)
-        //{
-        //    GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
-        //    AnchorObject ao = icon.GetComponent<AnchorObject>();
-        //    ao.iconName = "icon-" + System.DateTime.Now.ToString("MM-dd-yy-H-mm-ss-fff");
-        //    print("instantiating " + ao.iconName);
-        //    ao.transform.position = vect;
-        //}
+            // Adjust magnitude of size something
+            //Vector3 vect = hit.point + (hit.normal * wireframe.GetComponent<Collider>().bounds.size.magnitude / 2);
+           // wireframe.transform.position = vect;
+        }
     }
 }

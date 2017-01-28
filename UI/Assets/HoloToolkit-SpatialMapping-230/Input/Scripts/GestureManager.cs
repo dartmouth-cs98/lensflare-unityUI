@@ -12,6 +12,8 @@ namespace Academy.HoloToolkit.Unity
     /// When a tap gesture is detected, GestureManager uses GazeManager to find the game object.
     /// GestureManager then sends a message to that game object.
     /// </summary>
+    /// 
+
     [RequireComponent(typeof(GazeManager))]
     public partial class GestureManager : Singleton<GestureManager>
     {
@@ -36,6 +38,10 @@ namespace Academy.HoloToolkit.Unity
         private GestureRecognizer gestureRecognizer;
         private GameObject focusedObject;
 
+        private bool dragging = false;
+        private GameObject draggedGO;
+
+
         void Start()
         {
             // Create a new GestureRecognizer. Sign up for tapped events.
@@ -52,16 +58,46 @@ namespace Academy.HoloToolkit.Unity
         {
             if (focusedObject != null)
             {
-                Vector3 vect = new Vector3(GazeManager.Instance.HitInfo.point.x, GazeManager.Instance.HitInfo.point.y, GazeManager.Instance.HitInfo.point.z);
+                IconManager iconManager = gameObject.GetComponent<IconManager>();
 
-                print(focusedObject);
-                gameObject.GetComponent<IconManager>().PlaceBox(vect);//SendMessage("OnAirTapped", SendMessageOptions.RequireReceiver);
-            }
+                if (dragging)
+                {
+                    print("done dragging");
+                    dragging = false;
+                    draggedGO.layer = 0;
+                    draggedGO.transform.GetChild(0).gameObject.layer = 0;
+                    iconManager.SaveAnchor(draggedGO);
+                }
+                else
+                {
+                    Vector3 vect = GazeManager.Instance.HitInfo.point;
+                    print(focusedObject);
+
+                    if (focusedObject.tag == "Gem")
+                    {
+                        //GemBehavior gb = focusedObject.transform.parent.GetComponent<GemBehavior>();
+                        //gb.Select();
+                        print("Setting dragging" + focusedObject);
+                        dragging = true;
+                        draggedGO = focusedObject.transform.parent.transform.gameObject;
+                        draggedGO.layer = 2;
+                        draggedGO.transform.GetChild(0).gameObject.layer = 2;
+                        iconManager.DeleteAnchor(draggedGO);
+                    }
+                    else
+                    {
+                        gameObject.GetComponent<IconManager>().PlaceBox(vect);
+                        //SendMessage("OnAirTapped", SendMessageOptions.RequireReceiver);
+                    }
+                }
+            } 
         }
 
         void LateUpdate()
         {
             GameObject oldFocusedObject = focusedObject;
+
+           
 
             if (GazeManager.Instance.Hit &&
                 OverrideFocusedObject == null &&
@@ -83,6 +119,17 @@ namespace Academy.HoloToolkit.Unity
                 // Start looking for new gestures.  This is to prevent applying gestures from one hologram to another.
                 gestureRecognizer.CancelGestures();
                 gestureRecognizer.StartCapturingGestures();
+            }
+
+            if (dragging)
+            {
+                print("Moving gem");
+
+                RaycastHit hit = GazeManager.Instance.HitInfo;
+
+                // Adjust magnitude of size something
+                Vector3 vect = hit.point;// + (hit.normal * draggedGO.GetComponent<Collider>().bounds.size.magnitude / 2);
+                draggedGO.transform.position = vect;
             }
         }
 
