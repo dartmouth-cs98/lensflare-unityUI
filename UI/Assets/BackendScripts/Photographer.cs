@@ -90,7 +90,7 @@ public class Photographer : MonoBehaviour
         cameraParams.cameraResolutionHeight = cameraResolution.height;
         cameraParams.pixelFormat = CapturePixelFormat.BGRA32;
 
-        capture.StartPhotoModeAsync(cameraParams, false, OnPhotoModeStarted);
+        capture.StartPhotoModeAsync(cameraParams, OnPhotoModeStarted);
     }
 
     // Enter photo mode, set path
@@ -188,7 +188,7 @@ public class Photographer : MonoBehaviour
 
     // READY FOR TESTING
     // need to translate everything in the ArrayList textDetections
-    public void TranslateText(ArrayList textDetections, string targetLang)
+    public void TranslateText(string targetLang)
     {
         // Google Translate API static values
         string apiKey = "AIzaSyA8Gc4eafOjnhnj5QYn7I2ZNEumpxtxY-s";
@@ -252,7 +252,7 @@ public class Photographer : MonoBehaviour
     }
 
     // for searching Wikipedia for matching page titles
-    public void SearchWiki(ArrayList landmarks)
+    public void SearchWiki()
     {
         // Wiki Search API static values
         string searchURL = "https://en.wikipedia.org/w/api.php?action=opensearch&limit=1&format=json&search=";
