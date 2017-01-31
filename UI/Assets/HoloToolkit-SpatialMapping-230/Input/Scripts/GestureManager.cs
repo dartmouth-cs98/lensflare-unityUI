@@ -40,14 +40,16 @@ namespace Academy.HoloToolkit.Unity
 
         private bool dragging = false;
         private GameObject draggedGO;
+        private float iconOffset;
 
 
         void Start()
         {
+            iconOffset = GameObject.Find("GemParticleWorking").GetComponentInChildren<Collider>().bounds.size.magnitude / 4;
+
             // Create a new GestureRecognizer. Sign up for tapped events.
             gestureRecognizer = new GestureRecognizer();
             gestureRecognizer.SetRecognizableGestures(GestureSettings.Tap);
-
             gestureRecognizer.TappedEvent += GestureRecognizer_TappedEvent;
 
             // Start looking for gestures.
@@ -69,8 +71,7 @@ namespace Academy.HoloToolkit.Unity
                     iconManager.SaveAnchor(draggedGO);
                 }
                 else
-                {
-                    Vector3 vect = GazeManager.Instance.HitInfo.point;
+                { 
                     print(focusedObject);
 
                     if (focusedObject.tag == "Gem")
@@ -86,8 +87,9 @@ namespace Academy.HoloToolkit.Unity
                     }
                     else
                     {
+                        RaycastHit hit = GazeManager.Instance.HitInfo;
+                        Vector3 vect = hit.point + (hit.normal * iconOffset);
                         gameObject.GetComponent<IconManager>().PlaceBox(vect);
-                        //SendMessage("OnAirTapped", SendMessageOptions.RequireReceiver);
                     }
                 }
             } 
@@ -126,9 +128,7 @@ namespace Academy.HoloToolkit.Unity
                 print("Moving gem");
 
                 RaycastHit hit = GazeManager.Instance.HitInfo;
-
-                // Adjust magnitude of size something
-                Vector3 vect = hit.point;// + (hit.normal * draggedGO.GetComponent<Collider>().bounds.size.magnitude / 2);
+                Vector3 vect = hit.point + (hit.normal * iconOffset);
                 draggedGO.transform.position = vect;
             }
         }

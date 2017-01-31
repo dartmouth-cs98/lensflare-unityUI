@@ -17,7 +17,6 @@ public class Photographer : MonoBehaviour
     public Rotate rotate;
     TextToSpeechManager ttsm; 
 
-    string TIMEFORMAT = "yyddMHHmmss";
     string TESTFILE = "sign.jpg";
 
     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
@@ -27,6 +26,7 @@ public class Photographer : MonoBehaviour
     int maxLength = 235;
     bool audioOn = true;
     bool visualsOn = true;
+    bool annotate = true;
     string currAction = "detect";
     string language = "en";
 
@@ -57,14 +57,18 @@ public class Photographer : MonoBehaviour
         PhotoCapture.CreateAsync(false, OnPhotoCaptureCreated);
     }
 
-    public void TakePicture()
+    public void TakePicture(string name, bool icon)
     {
+        filepath = System.IO.Path.Combine(Application.persistentDataPath, name + ".jpg");
+        annotate = icon ? false : true;
+
         while (photo == null)
         {
             print("waiting to enter photo mode");
         }
 
         print("taking pic..");
+        timer.Reset();
         timer.Start();
         photo.TakePhotoAsync(filepath, PhotoCaptureFileOutputFormat.JPG, OnCapturedPhotoToDisk);
     }
@@ -99,7 +103,6 @@ public class Photographer : MonoBehaviour
         if (result.success)
         {
             print("photo mode started");
-            filepath = System.IO.Path.Combine(Application.persistentDataPath, "translationImage" + DateTime.Now.ToString(TIMEFORMAT) + ".jpg");
         }
         else
         {
@@ -127,7 +130,10 @@ public class Photographer : MonoBehaviour
             print("captured photo to disk: " + filepath);
             print("time to save pic:" + timer.ElapsedMilliseconds);
 
-            Annotate(imgBase64);
+            if (annotate)
+            {
+                Annotate(imgBase64);
+            }
         }
         else
         {

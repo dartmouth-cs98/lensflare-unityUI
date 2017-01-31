@@ -9,42 +9,13 @@ using System.Linq;
 public class IconManager : MonoBehaviour {
 
     WorldAnchorStore store;
-    KeywordRecognizer keywordRecognizer = null;
-    Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
+    Photographer photographer;
 
     // Use this for initialization
     void Start () {
        
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
-
-        // Testing purposes
-        //keywords.Add("Move", () =>
-        //{
-        //    print("moved");
-        //    MoveAnchor(new Vector3(0.2f, 0.5f, 1.2f));
-        //});
-
-        //keywords.Add("Clear", () =>
-        //{
-        //    print("cleared");
-        //    this.store.Clear();
-        //});
-
-        keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
-
-        // Register a callback for the KeywordRecognizer and start recognizing!
-        keywordRecognizer.OnPhraseRecognized += KeywordRecognizer_OnPhraseRecognized;
-        keywordRecognizer.Start();
-    }
-
-    // Testing
-    private void KeywordRecognizer_OnPhraseRecognized(PhraseRecognizedEventArgs args)
-    {
-        System.Action keywordAction;
-        if (keywords.TryGetValue(args.text, out keywordAction))
-        {
-            keywordAction.Invoke();
-        }
+        photographer = GameObject.Find("Main Camera").GetComponent<Photographer>();
     }
 
     // Update is called once per frame
@@ -69,8 +40,10 @@ public class IconManager : MonoBehaviour {
 
                 //if (anchor.isLocated)
                 //{
-                    print("saving :" + go.GetComponent<IconInfo>().iconName + " @" +anchor.transform.position);
-                    this.store.Save(go.GetComponent<IconInfo>().iconName, anchor);
+                string iconName = go.GetComponent<IconInfo>().iconName;
+                print("saving :" + iconName + " @" +anchor.transform.position);
+                this.store.Save(iconName, anchor);
+                photographer.TakePicture(iconName, true);  
                // }
                 //else
                 //{
@@ -79,33 +52,6 @@ public class IconManager : MonoBehaviour {
             }
         }
     }
-
-    //public void MoveAnchor(string iconName, GameObject go, Vector3 vect)
-    //{
-
-    //    if (go.GetComponent<WorldAnchor>() == null)
-    //    {
-    //        go.transform.position = vect;
-    //        SaveAnchor(iconName, go);
-    //    }
-    //    else
-    //    {
-           
-
-    //        go.transform.position = vect;
-    //        WorldAnchor anchor = go.AddComponent<WorldAnchor>();
-
-    //        //if (anchor.isLocated)
-    //        //{
-    //            print("saving :" + iconName);
-    //            this.store.Save(iconName, anchor);
-    //        //}
-    //        //else
-    //        //{
-    //        //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
-    //        //}
-    //    }
-    //}
 
     public void DeleteAnchor(GameObject go)
     {
@@ -137,7 +83,7 @@ public class IconManager : MonoBehaviour {
         for (int i = 0; i < anchorIds.Length; i++)
         {
             print("anchor #:" + anchorIds[i]);
-            GameObject icon = Instantiate(Resources.Load("IconPrefab")) as GameObject;
+            GameObject icon = Instantiate(Resources.Load("GemPrefab/Prefab/GemParticleWorking")) as GameObject;
             icon.GetComponent<IconInfo>().iconName = anchorIds[i];
             WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
             

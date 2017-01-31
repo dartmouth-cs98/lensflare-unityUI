@@ -3,6 +3,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 using HoloToolkit.Unity;
+using System;
+using System.Net;
+using System.Collections.Generic;
 
 // Based on Holograms 101 tutorial 
 public class SpeechManager : MonoBehaviour
@@ -41,7 +44,7 @@ public class SpeechManager : MonoBehaviour
             }
             else
             {
-                photographer.TakePicture();
+                photographer.TakePicture(GetTranslationFilepath(), false);
             }
         });
 
@@ -59,7 +62,7 @@ public class SpeechManager : MonoBehaviour
             }
             else
             {
-                photographer.TakePicture();
+                photographer.TakePicture(GetTranslationFilepath(), false);
             }
         });
 
@@ -76,7 +79,7 @@ public class SpeechManager : MonoBehaviour
             }
             else
             {
-                photographer.TakePicture();
+                photographer.TakePicture(GetTranslationFilepath(), false);
             }
         });
 
@@ -167,5 +170,10 @@ public class SpeechManager : MonoBehaviour
         {
             keywordAction.Invoke();
         }
+    }
+
+    private string GetTranslationFilepath()
+    {
+        return "translationImage" + DateTime.Now.ToString("yyddMHHmmss");
     }
 }
