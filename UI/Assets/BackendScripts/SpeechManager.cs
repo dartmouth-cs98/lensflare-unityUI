@@ -15,7 +15,9 @@ public class SpeechManager : MonoBehaviour
     TextToSpeechManager tsm;
 
     Photographer photographer;
-
+    //CanvasAnimation anim;
+    CanvasAnimation setupAnim;
+    CanvasAnimation doneAnim;
     KeywordRecognizer keywordRecognizer = null;
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
     bool testing = false;
@@ -26,9 +28,46 @@ public class SpeechManager : MonoBehaviour
 
     void Start()
     {
+        //anim = GetComponent<CanvasAnimation>();
+        GameObject setup = GameObject.FindGameObjectWithTag("SetupFlow");
+        setupAnim = setup.GetComponent<CanvasAnimation>();
+        doneAnim = GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<CanvasAnimation>();
 
         photographer = GetComponent<Photographer>();
         tsm = GetComponent<TextToSpeechManager>();
+
+        keywords.Add("Lensflare, set up", () => {
+            print("Loading canvas...");
+
+            setupAnim.GrowCanvas();
+            setupAnim.ChangeSprite("get_started");
+
+        });
+
+        keywords.Add("Lensflare, close set up", () => {
+            print("Closing canvas...");
+
+            setupAnim.ShrinkCanvas();
+
+        });
+
+        keywords.Add("Next", () => {
+            print("Closing canvas...");
+
+            setupAnim.ShrinkCanvas();
+            doneAnim.GrowCanvas();
+
+        });
+
+        keywords.Add("Done", () => {
+            print("Closing canvas...");
+
+            setupAnim.ShrinkCanvas();
+            doneAnim.ShrinkCanvas();
+
+            //call photo upload method
+
+        });
 
         keywords.Add("Translate", () => {
             print("Translating...");
@@ -175,5 +214,25 @@ public class SpeechManager : MonoBehaviour
     private string GetTranslationFilepath()
     {
         return "translationImage" + DateTime.Now.ToString("yyddMHHmmss");
+    }
+
+     void Update()
+    {
+        if (Input.GetKeyDown("v"))
+        {
+            print("About to shrink");
+            setupAnim.ShrinkCanvas();
+            //setupAnim.ChangeSprite("get_started");
+        }
+
+        if (Input.GetKeyDown("b"))
+        {
+            setupAnim.ChangeSprite("get_started");
+        }
+
+        if (Input.GetKeyDown("n"))
+        {
+            setupAnim.GrowCanvas();
+        }
     }
 }
