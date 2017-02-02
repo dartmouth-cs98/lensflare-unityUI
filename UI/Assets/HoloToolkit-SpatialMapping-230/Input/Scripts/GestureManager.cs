@@ -45,7 +45,7 @@ namespace Academy.HoloToolkit.Unity
 
         void Start()
         {
-            iconOffset = GameObject.Find("GemParticleWorking").GetComponentInChildren<Collider>().bounds.size.magnitude / 4;
+            iconOffset = GameObject.Find("GemCanvasPrefab").GetComponentInChildren<Collider>().bounds.size.magnitude / 4;
 
             // Create a new GestureRecognizer. Sign up for tapped events.
             gestureRecognizer = new GestureRecognizer();
@@ -66,8 +66,9 @@ namespace Academy.HoloToolkit.Unity
                 {
                     print("done dragging");
                     dragging = false;
-                    draggedGO.layer = 0;
-                    draggedGO.transform.GetChild(0).gameObject.layer = 0;
+                    //draggedGO.layer = 0;
+                    //draggedGO.transform.GetChild(0).gameObject.layer = 0;
+                    draggedGO.transform.FindChild("GemWrapper").transform.FindChild("Gem").gameObject.layer = 0;
                     iconManager.SaveAnchor(draggedGO);
                 }
                 else
@@ -80,15 +81,16 @@ namespace Academy.HoloToolkit.Unity
                         //gb.Select();
                         print("Setting dragging" + focusedObject);
                         dragging = true;
-                        draggedGO = focusedObject.transform.parent.transform.gameObject;
-                        draggedGO.layer = 2;
-                        draggedGO.transform.GetChild(0).gameObject.layer = 2;
+                        draggedGO = focusedObject.transform.parent.transform.parent.transform.gameObject;
+                        //draggedGO.layer = 2;
+                        //draggedGO.transform.GetChild(0).gameObject.layer = 2;
+                        focusedObject.gameObject.layer = 2;
                         iconManager.DeleteAnchor(draggedGO);
                     }
                     else
                     {
                         RaycastHit hit = GazeManager.Instance.HitInfo;
-                        Vector3 vect = hit.point + (hit.normal * iconOffset);
+                        Vector3 vect = hit.point; //+ (hit.normal * iconOffset);
                         gameObject.GetComponent<IconManager>().PlaceBox(vect);
                     }
                 }
@@ -128,7 +130,8 @@ namespace Academy.HoloToolkit.Unity
                 print("Moving gem");
 
                 RaycastHit hit = GazeManager.Instance.HitInfo;
-                Vector3 vect = hit.point + (hit.normal * iconOffset);
+                //Vector3 vect = hit.point + (hit.normal * iconOffset);
+                Vector3 vect = hit.point;
                 draggedGO.transform.position = vect;
             }
         }

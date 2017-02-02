@@ -25,6 +25,11 @@ public class IconManager : MonoBehaviour {
             print("cleared");
             this.store.Clear();
         }
+        if (Input.GetKeyDown("u"))
+        {
+            print("uploading...");
+            GameObject.Find("Main Camera").GetComponent<SpeechManager>().PerformImageUpload();
+        }
     }
 
     public void SaveAnchor(GameObject go)
@@ -55,6 +60,7 @@ public class IconManager : MonoBehaviour {
 
     public void DeleteAnchor(GameObject go)
     {
+        print("deleting" + go);
         this.store.Delete(go.GetComponent<IconInfo>().iconName);
         DestroyImmediate(go.GetComponent<WorldAnchor>());
     }
@@ -62,7 +68,7 @@ public class IconManager : MonoBehaviour {
     public void PlaceBox(Vector3 vect)
     {
         
-        GameObject icon = Instantiate(Resources.Load("GemPrefab/Prefab/GemParticleWorking")) as GameObject;
+        GameObject icon = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
         print("ICON" + icon);
         icon.transform.position = vect;
 
@@ -71,6 +77,11 @@ public class IconManager : MonoBehaviour {
         print("instantiating " + iconName + " at " + vect);
 
         SaveAnchor(icon);
+    }
+
+    public WorldAnchorStore GetAnchorStore()
+    {
+        return this.store;
     }
 
     private void AnchorStoreLoaded(WorldAnchorStore store)
@@ -83,7 +94,7 @@ public class IconManager : MonoBehaviour {
         for (int i = 0; i < anchorIds.Length; i++)
         {
             print("anchor #:" + anchorIds[i]);
-            GameObject icon = Instantiate(Resources.Load("GemPrefab/Prefab/GemParticleWorking")) as GameObject;
+            GameObject icon = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
             icon.GetComponent<IconInfo>().iconName = anchorIds[i];
             WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
             
