@@ -16,7 +16,7 @@ public class SpeechManager : MonoBehaviour
 
     Photographer photographer;
     //CanvasAnimation anim;
-    //CanvasAnimation setupAnim;
+    CanvasAnimation uploadingAnim;
     CanvasAnimation doneAnim;
     UploadImages uploadImages;
     KeywordRecognizer keywordRecognizer = null;
@@ -29,9 +29,7 @@ public class SpeechManager : MonoBehaviour
 
     void Start()
     {
-        //anim = GetComponent<CanvasAnimation>();
-        GameObject setup = GameObject.FindGameObjectWithTag("SetupFlow");
-        //setupAnim = setup.GetComponent<CanvasAnimation>();
+        uploadingAnim = GameObject.FindGameObjectWithTag("UploadFlow").GetComponent<CanvasAnimation>();
         doneAnim = GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<CanvasAnimation>();
         //uploadImages = GetComponent<UploadImages>();
         photographer = GetComponent<Photographer>();
@@ -63,7 +61,7 @@ public class SpeechManager : MonoBehaviour
         keywords.Add("Done", () => {
             print("Closing canvas...");
 
-            //setupAnim.ShrinkCanvas();
+            uploadingAnim.GrowCanvas();
             doneAnim.ShrinkCanvas();
 
             //call photo upload method
@@ -248,11 +246,11 @@ public class SpeechManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown("v"))
+        if (Input.GetKeyDown("d"))
         {
-            print("About to shrink");
-            //setupAnim.ShrinkCanvas();
-            //setupAnim.ChangeSprite("get_started");
+            print("Done Flow start");
+            uploadingAnim.GrowCanvas();
+            doneAnim.ShrinkCanvas();
         }
 
         if (Input.GetKeyDown("b"))
