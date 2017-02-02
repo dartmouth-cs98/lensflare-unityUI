@@ -16,8 +16,9 @@ public class SpeechManager : MonoBehaviour
 
     Photographer photographer;
     //CanvasAnimation anim;
-    CanvasAnimation setupAnim;
+    //CanvasAnimation setupAnim;
     CanvasAnimation doneAnim;
+    UploadImages uploadImages;
     KeywordRecognizer keywordRecognizer = null;
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
     bool testing = false;
@@ -30,31 +31,31 @@ public class SpeechManager : MonoBehaviour
     {
         //anim = GetComponent<CanvasAnimation>();
         GameObject setup = GameObject.FindGameObjectWithTag("SetupFlow");
-        setupAnim = setup.GetComponent<CanvasAnimation>();
+        //setupAnim = setup.GetComponent<CanvasAnimation>();
         doneAnim = GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<CanvasAnimation>();
-
+        //uploadImages = GetComponent<UploadImages>();
         photographer = GetComponent<Photographer>();
         tsm = GetComponent<TextToSpeechManager>();
 
         keywords.Add("Lensflare, set up", () => {
             print("Loading canvas...");
 
-            setupAnim.GrowCanvas();
-            setupAnim.ChangeSprite("get_started");
+            //setupAnim.GrowCanvas();
+            //setupAnim.ChangeSprite("get_started");
 
         });
 
         keywords.Add("Lensflare, close set up", () => {
             print("Closing canvas...");
 
-            setupAnim.ShrinkCanvas();
+            //setupAnim.ShrinkCanvas();
 
         });
 
         keywords.Add("Next", () => {
             print("Closing canvas...");
 
-            setupAnim.ShrinkCanvas();
+            //setupAnim.ShrinkCanvas();
             doneAnim.GrowCanvas();
 
         });
@@ -62,7 +63,7 @@ public class SpeechManager : MonoBehaviour
         keywords.Add("Done", () => {
             print("Closing canvas...");
 
-            setupAnim.ShrinkCanvas();
+            //setupAnim.ShrinkCanvas();
             doneAnim.ShrinkCanvas();
 
             //call photo upload method
@@ -194,6 +195,14 @@ public class SpeechManager : MonoBehaviour
 
         });
 
+        //keywords.Add("Lensflare, upload", () => {
+        //    print("Uploading...");
+
+        //    if (audioOn) tsm.SpeakText("Uploading Images");
+        //    PerformImageUpload();
+
+        //});
+
         // Tell the KeywordRecognizer about our keywords.
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
 
@@ -216,23 +225,44 @@ public class SpeechManager : MonoBehaviour
         return "translationImage" + DateTime.Now.ToString("yyddMHHmmss");
     }
 
-     void Update()
+    private string[] GetIconIds()
+    {
+        IconManager im = GameObject.Find("Cursor_box").GetComponent<IconManager>();
+        return im.GetAnchorStore().GetAllIds();
+    }
+
+    public void PerformImageUpload()
+    {
+        string[] ids = GetIconIds();
+        string[] localPaths = new string[ids.Length];
+        string[] s3Paths = new string[ids.Length];
+
+        for (int i = 0; i < ids.Length; i++)
+        {
+            localPaths[i] = System.IO.Path.Combine(Application.persistentDataPath, ids[i] + ".jpg");
+            s3Paths[i] = ids[i] + ".jpg";
+        }
+
+        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "dog@food.com", "test");
+    }
+
+    void Update()
     {
         if (Input.GetKeyDown("v"))
         {
             print("About to shrink");
-            setupAnim.ShrinkCanvas();
+            //setupAnim.ShrinkCanvas();
             //setupAnim.ChangeSprite("get_started");
         }
 
         if (Input.GetKeyDown("b"))
         {
-            setupAnim.ChangeSprite("get_started");
+            //setupAnim.ChangeSprite("get_started");
         }
 
         if (Input.GetKeyDown("n"))
         {
-            setupAnim.GrowCanvas();
+            //setupAnim.GrowCanvas();
         }
     }
 }

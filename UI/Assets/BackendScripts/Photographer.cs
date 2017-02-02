@@ -221,7 +221,7 @@ public class Photographer : MonoBehaviour
                 }
                 translations = translations.Trim();
 
-                if (visualsOn) sdt.UpdateText("Translation to " + language, translations);
+                //if (visualsOn) sdt.UpdateText("Translation to " + language, translations);
                 Debug.Log(translations);
 
                 Debug.Log(translations);
@@ -285,7 +285,7 @@ public class Photographer : MonoBehaviour
                 else textString += ((LabelAnnotation)labels[i]).getDescription() + ".";
             }
             if (audioOn) ttsm.SpeakText(speechString);
-            if (visualsOn) sdt.UpdateText("No landmarks found", textString);
+            //if (visualsOn) sdt.UpdateText("No landmarks found", textString);
         }
     }
 
@@ -346,7 +346,7 @@ public class Photographer : MonoBehaviour
                     translations = translations.Replace(repChars[i], "");
                 }
 
-                if (visualsOn) sdt.UpdateText("Translation to " + language.ToUpper(), translations);
+                //if (visualsOn) sdt.UpdateText("Translation to " + language.ToUpper(), translations);
                 Debug.Log(translations);
             }
             else if (mode.Equals("WikiSearch", StringComparison.Ordinal))
@@ -418,7 +418,7 @@ public class Photographer : MonoBehaviour
                 Debug.Log(pageTitle);
                 Debug.Log(pageExtract);
                 if (audioOn) ttsm.SpeakText(pageTitle);
-                if (visualsOn) sdt.UpdateText(pageTitle, pageExtract);
+                //if (visualsOn) sdt.UpdateText(pageTitle, pageExtract);
             }
         }
         else
