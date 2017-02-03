@@ -35,21 +35,6 @@ public class SpeechManager : MonoBehaviour
         photographer = GetComponent<Photographer>();
         tsm = GetComponent<TextToSpeechManager>();
 
-        keywords.Add("Lensflare, set up", () => {
-            print("Loading canvas...");
-
-            //setupAnim.GrowCanvas();
-            //setupAnim.ChangeSprite("get_started");
-
-        });
-
-        keywords.Add("Lensflare, close set up", () => {
-            print("Closing canvas...");
-
-            //setupAnim.ShrinkCanvas();
-
-        });
-
         keywords.Add("Next", () => {
             print("Closing canvas...");
 
@@ -60,14 +45,20 @@ public class SpeechManager : MonoBehaviour
 
         keywords.Add("Done", () => {
             print("Closing canvas...");
-
-            uploadingAnim.GrowCanvas();
-            doneAnim.ShrinkCanvas();
-
+            
+            doneSetup();
             //call photo upload method
 
         });
 
+
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        //                          OLD WORK                                  //
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
         keywords.Add("Translate", () => {
             print("Translating...");
 
@@ -103,24 +94,7 @@ public class SpeechManager : MonoBehaviour
                 photographer.TakePicture(GetTranslationFilepath(), false);
             }
         });
-
-        keywords.Add("Lensflare, what is this?", () => {
-            print("Finding landmark...");
-
-            tsm.SpeakText("Scanning your surroundings");
-
-            photographer.SetMode("detect");
-            rotate.indicator_visible = true;
-            if (testing)
-            {
-                photographer.UseLocalPicture();
-            }
-            else
-            {
-                photographer.TakePicture(GetTranslationFilepath(), false);
-            }
-        });
-
+  
         keywords.Add("Lensflare, turn off audio", () => {
             print("Turning off audio...");
 
@@ -138,25 +112,7 @@ public class SpeechManager : MonoBehaviour
             photographer.SetAudio(true);
 
         });
-
-        keywords.Add("Lensflare, turn audio off", () => {
-            print("Turning off audio...");
-
-            tsm.SpeakText("Turning audio off");
-            audioOn = false;
-            photographer.SetAudio(false);
-
-        });
-
-        keywords.Add("Lensflare, turn audio on", () => {
-            print("Turning on audio...");
-
-            tsm.SpeakText("Turning audio on");
-            audioOn = true;
-            photographer.SetAudio(true);
-
-        });
-
+        
         keywords.Add("Lensflare, turn off visuals", () => {
             print("Turning off visuals...");
 
@@ -174,33 +130,7 @@ public class SpeechManager : MonoBehaviour
             photographer.SetVisuals(true);
 
         });
-
-        keywords.Add("Lensflare, turn visuals off", () => {
-            print("Turning off visuals...");
-
-            if (audioOn) tsm.SpeakText("Turning visuals off");
-            visualsOn = false;
-            photographer.SetVisuals(false);
-
-        });
-
-        keywords.Add("Lensflare, turn visuals on", () => {
-            print("Turning on visuals...");
-
-            if (audioOn) tsm.SpeakText("Turning visuals on");
-            visualsOn = true;
-            photographer.SetVisuals(true);
-
-        });
-
-        //keywords.Add("Lensflare, upload", () => {
-        //    print("Uploading...");
-
-        //    if (audioOn) tsm.SpeakText("Uploading Images");
-        //    PerformImageUpload();
-
-        //});
-
+        
         // Tell the KeywordRecognizer about our keywords.
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
 
@@ -242,15 +172,23 @@ public class SpeechManager : MonoBehaviour
         }
 
         GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "dog@food.com", "test");
+        doneAnim.ShrinkCanvas();
+
+    }
+
+    public void doneSetup()
+    {
+        print("Done Flow start");
+        uploadingAnim.GrowCanvas();
+        doneAnim.ShrinkCanvas();
+        PerformImageUpload();
     }
 
     void Update()
     {
         if (Input.GetKeyDown("d"))
         {
-            print("Done Flow start");
-            uploadingAnim.GrowCanvas();
-            doneAnim.ShrinkCanvas();
+            doneSetup();
         }
 
         if (Input.GetKeyDown("b"))
