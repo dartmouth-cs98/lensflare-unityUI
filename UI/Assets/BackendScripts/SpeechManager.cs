@@ -6,6 +6,8 @@ using HoloToolkit.Unity;
 using System;
 using System.Net;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+
 
 // Based on Holograms 101 tutorial 
 public class SpeechManager : MonoBehaviour
@@ -31,17 +33,19 @@ public class SpeechManager : MonoBehaviour
     {
         uploadingAnim = GameObject.FindGameObjectWithTag("UploadFlow").GetComponent<CanvasAnimation>();
         doneAnim = GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<CanvasAnimation>();
+        doneAnim.GrowCanvas();
         //uploadImages = GetComponent<UploadImages>();
         photographer = GetComponent<Photographer>();
+
         tsm = GetComponent<TextToSpeechManager>();
 
-        keywords.Add("Next", () => {
-            print("Closing canvas...");
+        //keywords.Add("Next", () => {
+        //    print("Closing canvas...");
 
-            //setupAnim.ShrinkCanvas();
-            doneAnim.GrowCanvas();
+        //    //setupAnim.ShrinkCanvas();
+        //    doneAnim.GrowCanvas();
 
-        });
+        //});
 
         keywords.Add("Done", () => {
             print("Closing canvas...");
@@ -50,7 +54,6 @@ public class SpeechManager : MonoBehaviour
             //call photo upload method
 
         });
-
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -171,7 +174,7 @@ public class SpeechManager : MonoBehaviour
             s3Paths[i] = ids[i] + ".jpg";
         }
 
-        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "dog@food.com", "test");
+        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "nick@moolenijzer.com", "The MoMA");
         doneAnim.ShrinkCanvas();
 
     }
@@ -199,6 +202,11 @@ public class SpeechManager : MonoBehaviour
         if (Input.GetKeyDown("n"))
         {
             //setupAnim.GrowCanvas();
+        }
+
+        if (Input.GetKeyDown("t"))
+        {
+            SceneManager.LoadScene("DisplayFlow");
         }
     }
 }
