@@ -19,59 +19,126 @@ public class UploadImages : MonoBehaviour
         StartCoroutine(Upload(localFilePaths, s3FilePaths, userEmail, spaceName));
     }
 
+
+    IEnumerator WaitForRequest(WWW www, string mode, string[] localFilePaths)
+    {
+        yield return www;
+
+        if (www.error == null)
+        {
+            if (mode.Equals("PostImage"))
+            {
+                string detections = www.text;
+
+                FileCollection FileCollection = null;
+
+                try
+                {
+                    FileCollection = JsonUtility.FromJson<FileCollection>(detections);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(e);
+                }
+
+                byte[] imageToUpload = null;
+                for (int j = 0; j < FileCollection.files.Length; j++)
+                {
+                    try
+                    {
+                        imageToUpload = File.ReadAllBytes(localFilePaths[j]);
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        Debug.Log(e);
+                        throw e;
+                    }
+
+                    WWW post = new WWW(FileCollection.files[j].signedUrl);
+                    WWWForm wwwForm = new WWWForm();
+                    wwwForm.AddBinaryData("test", imageToUpload);
+                    StartCoroutine(WaitForRequest(www, "IndivudalImage", localFilePaths));
+
+                }
+            }
+            else
+            {
+                print(www.text);
+            }
+        }
+        else
+        {
+            Debug.Log(www.error);
+        }
+
+    }
+
     IEnumerator Upload(string[] localFilePaths, string[] s3FilePaths, string userEmail, string spaceName)
     {
         ASCIIEncoding encoding = new ASCIIEncoding();
         byte[] jsonBytes = encoding.GetBytes(ConstructRequestJson(userEmail, spaceName, s3FilePaths));
 
-        HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
-        signedUrlRequest.ContentType = "application/json";
-        signedUrlRequest.Method = "POST";
-        signedUrlRequest.ContentLength = jsonBytes.Length;
-        signedUrlRequest.GetRequestStream().Write(jsonBytes, 0, jsonBytes.Length);
-
-        HttpWebResponse signedUrlResponse = (HttpWebResponse)signedUrlRequest.GetResponse();
-        FileCollection FileCollection = null; 
-
-        try
-        {
-           FileCollection = JsonUtility.FromJson<FileCollection>(new StreamReader(signedUrlResponse.GetResponseStream()).ReadToEnd());
+        //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
+        //signedUrlRequest.ContentType = "application/json";
+        //signedUrlRequest.Method = "POST";
+        //signedUrlRequest.ContentLength = jsonBytes.Length;
+        //signedUrlRequest.GetRequestStream().Write(jsonBytes, 0, jsonBytes.Length);
 
 
-        } catch (Exception e)
-        {
-            Debug.Log(e);
-        }
+        WWWForm wwwForm = new WWWForm();
+        wwwForm.AddBinaryData("test", jsonBytes);
+        WWW www = new WWW(server_url + signed_url_endpoint, wwwForm);
+        StartCoroutine(WaitForRequest(www, "PostImage", localFilePaths));
 
-        byte[] imageToUpload = null;
-        for (int j = 0; j < FileCollection.files.Length; j++)
-        {
-            try
-            {
-                imageToUpload = File.ReadAllBytes(localFilePaths[j]);
-            }
-            catch (FileNotFoundException e)
-            {
-                Debug.Log(e);
-                throw e; 
-            }
 
-            HttpWebRequest uploadRequest = (HttpWebRequest)WebRequest.Create(FileCollection.files[j].signedUrl);
-            uploadRequest.Method = "PUT";
-            uploadRequest.ContentLength = imageToUpload.Length;
-            uploadRequest.GetRequestStream().Write(imageToUpload, 0, imageToUpload.Length);
+        //var client = new Http
 
-            try
-            {
-                HttpWebResponse uploadResponse = uploadRequest.GetResponse() as HttpWebResponse;
-                Debug.Log("File Uploaded");
-            }
-            catch (WebException e)
-            {
-                Debug.Log("Upload Failed");
-                Debug.Log(new StreamReader(e.Response.GetResponseStream()).ReadToEnd());
-            }
-        }
+
+
+
+        //HttpWebResponse signedUrlResponse = (HttpWebResponse)signedUrlRequest.GetResponse();
+        //FileCollection FileCollection = null;
+
+        //try
+        //{
+        //    FileCollection = JsonUtility.FromJson<FileCollection>(new StreamReader(signedUrlResponse.GetResponseStream()).ReadToEnd());
+
+
+        //}
+        //catch (Exception e)
+        //{
+        //    Debug.Log(e);
+        //}
+
+        //byte[] imageToUpload = null;
+        //for (int j = 0; j < FileCollection.files.Length; j++)
+        //{
+        //    try
+        //    {
+        //        imageToUpload = File.ReadAllBytes(localFilePaths[j]);
+        //    }
+        //    catch (FileNotFoundException e)
+        //    {
+        //        Debug.Log(e);
+        //        throw e;
+        //    }
+
+        //    HttpWebRequest uploadRequest = (HttpWebRequest)WebRequest.Create(FileCollection.files[j].signedUrl);
+        //    uploadRequest.Method = "PUT";
+        //    uploadRequest.ContentLength = imageToUpload.Length;
+        //    uploadRequest.GetRequestStream().Write(imageToUpload, 0, imageToUpload.Length);
+
+        //    try
+        //    {
+        //        HttpWebResponse uploadResponse = uploadRequest.GetResponse() as HttpWebResponse;
+        //        Debug.Log("File Uploaded");
+        //    }
+        //    catch (WebException e)
+        //    {
+        //        Debug.Log("Upload Failed");
+        //        Debug.Log(new StreamReader(e.Response.GetResponseStream()).ReadToEnd());
+        //    }
+        //}
 
         yield return 0;
     }
@@ -108,4 +175,18 @@ public class UploadImages : MonoBehaviour
         public string url;
     }
 
+    [Serializable]
+    public class Item
+    {
+        public string title;
+        public string text;
+        public string url;
+    }
+
+    [Serializable]
+    public class Space
+    {
+        public string name;
+        public Item[] items;
+    }
 }

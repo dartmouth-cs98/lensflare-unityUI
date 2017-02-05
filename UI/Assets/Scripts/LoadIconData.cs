@@ -10,6 +10,7 @@ using SimpleJSON;
 
 public class LoadIconData : MonoBehaviour {
 
+
     const string bucketName = "lensflare-files";
     const string server_url = "http://lensflare-server.herokuapp.com";
     const string signed_url_endpoint = "/getSpacesUnauth?email=nick@moolenijzer.com";
@@ -24,36 +25,65 @@ public class LoadIconData : MonoBehaviour {
 
         if (Input.GetKeyDown("n"))
         {
-            print("HERE");
             download();
         }
     }
 
-    public void download()
+    IEnumerator WaitForRequest(WWW www, string mode)
     {
-        HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
-        signedUrlRequest.ContentType = "application/json";
-        signedUrlRequest.Method = "GET";
+        yield return www;
 
-        HttpWebResponse signedUrlResponse = (HttpWebResponse)signedUrlRequest.GetResponse();
-        print(signedUrlResponse.StatusDescription);
-        WebResponse webResponse = signedUrlRequest.GetResponse();
-        Stream dataStream = webResponse.GetResponseStream();
-        StreamReader reader = new StreamReader(dataStream);
-        string response = reader.ReadToEnd();
-        print(response);
-        var parsedResponse = JSON.Parse(response);
-        JSONNode spaces = parsedResponse["local"]["spaces"];
-        for (int i = 0; i < spaces.Count; i++)
+        if (www.error == null)
         {
-            JSONNode items = spaces[i]["items"];
-            for (int j = 0; j < items.Count; j++)
+            string detections = www.text;
+            Debug.Log(detections);
+            var parsedResponse = JSON.Parse(detections);
+            JSONNode spaces = parsedResponse["local"]["spaces"];
+            for (int i = 0; i < spaces.Count; i++)
             {
-                print(items[j]["title"]);
+                JSONNode items = spaces[i]["items"];
+                for (int j = 0; j < items.Count; j++)
+                {
+                    print(items[j]["title"]);
+                }
             }
         }
-        reader.Close();
-        signedUrlResponse.Close();
+        else
+        {
+            Debug.Log(www.error);
+        }
+        
+    }
+
+    public void download()
+    {
+
+        WWW www = new WWW(server_url + signed_url_endpoint);
+        StartCoroutine(WaitForRequest(www, "GetSpaces"));
+
+        //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
+        //signedUrlRequest.ContentType = "application/json";
+        //signedUrlRequest.Method = "GET";
+
+        //HttpWebResponse signedUrlResponse = (HttpWebResponse)signedUrlRequest.GetResponse();
+        //print(signedUrlResponse.StatusDescription);
+        //WebResponse webResponse = signedUrlRequest.GetResponse();
+        //Stream dataStream = webResponse.GetResponseStream();
+        //StreamReader reader = new StreamReader(dataStream);
+        //string response = reader.ReadToEnd();
+        //print(response);
+        //var parsedResponse = JSON.Parse(response);
+        //JSONNode spaces = parsedResponse["local"]["spaces"];
+        //for (int i = 0; i < spaces.Count; i++)
+        //{
+        //    JSONNode items = spaces[i]["items"];
+        //    for (int j = 0; j < items.Count; j++)
+        //    {
+        //        print(items[j]["title"]);
+        //    }
+        //}
+        //reader.Close();
+        //signedUrlResponse.Close();
 
     }
 }
