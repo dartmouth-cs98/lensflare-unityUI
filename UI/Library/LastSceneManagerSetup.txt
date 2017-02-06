@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/FrontScreen.unity
+- path: Assets/DisplayFlow.unity
   isLoaded: 1
   isActive: 1
