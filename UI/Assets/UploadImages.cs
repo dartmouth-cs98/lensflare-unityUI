@@ -11,6 +11,8 @@ public class UploadImages : MonoBehaviour
     const string bucketName = "lensflare-files";
     const string server_url = "http://lensflare-server.herokuapp.com";
     const string signed_url_endpoint = "/sign-s3";
+    string[] localFilePaths;
+
     public void Start()
     {
     }
@@ -20,7 +22,7 @@ public class UploadImages : MonoBehaviour
     }
 
 
-    IEnumerator WaitForRequest(WWW www, string mode, string[] localFilePaths)
+    IEnumerator WaitForRequest(WWW www, string mode)
     {
         yield return www;
 
@@ -40,12 +42,13 @@ public class UploadImages : MonoBehaviour
                 {
                     Debug.Log(e);
                 }
-
+                print(FileCollection);
                 byte[] imageToUpload = null;
                 for (int j = 0; j < FileCollection.files.Length; j++)
                 {
                     try
                     {
+                        print(localFilePaths[j]);
                         imageToUpload = File.ReadAllBytes(localFilePaths[j]);
                     }
                     catch (FileNotFoundException e)
@@ -54,10 +57,21 @@ public class UploadImages : MonoBehaviour
                         throw e;
                     }
 
-                    WWW post = new WWW(FileCollection.files[j].signedUrl);
-                    WWWForm wwwForm = new WWWForm();
-                    wwwForm.AddBinaryData("test", imageToUpload);
-                    StartCoroutine(WaitForRequest(www, "IndivudalImage", localFilePaths));
+                    Dictionary<string, string> headers = new Dictionary<string, string>();
+                    string sUrl = FileCollection.files[j].signedUrl;
+                    string head = sUrl.Substring(sUrl.IndexOf("=") + 1);
+                    var heads = head.Split('&');
+
+                    headers["AWSAccessKeyId"] = heads[0];
+                    headers["Expires"] = heads[1].Substring(heads[1].IndexOf("=") + 1);
+                    headers["Signature"] = heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
+                    headers["authorization"] = "AWS " + heads[0] + ":" + heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
+                    headers["Authorization"] = "AWS " + heads[0] + ":" + heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
+                    print(headers["AWSAccessKeyId"]);
+                    print(headers["Expires"]);
+                    print(headers["Signature"]);
+                    WWW post = new WWW(FileCollection.files[j].signedUrl, imageToUpload, headers);
+                    StartCoroutine(WaitForRequest(post, "IndivudalImage"));
 
                 }
             }
@@ -73,22 +87,32 @@ public class UploadImages : MonoBehaviour
 
     }
 
-    IEnumerator Upload(string[] localFilePaths, string[] s3FilePaths, string userEmail, string spaceName)
+    IEnumerator Upload(string[] userFilePaths, string[] s3FilePaths, string userEmail, string spaceName)
     {
         ASCIIEncoding encoding = new ASCIIEncoding();
         byte[] jsonBytes = encoding.GetBytes(ConstructRequestJson(userEmail, spaceName, s3FilePaths));
-
+        localFilePaths = userFilePaths;
+        print("HERE");
+        print(userFilePaths);
         //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
         //signedUrlRequest.ContentType = "application/json";
         //signedUrlRequest.Method = "POST";
         //signedUrlRequest.ContentLength = jsonBytes.Length;
         //signedUrlRequest.GetRequestStream().Write(jsonBytes, 0, jsonBytes.Length);
 
-
-        WWWForm wwwForm = new WWWForm();
-        wwwForm.AddBinaryData("test", jsonBytes);
-        WWW www = new WWW(server_url + signed_url_endpoint, wwwForm);
-        StartCoroutine(WaitForRequest(www, "PostImage", localFilePaths));
+        //byte[] arr = new byte[s3FilePaths.Length * string.];
+        //for (int i = 0; i < s3FilePaths.Length; i++)
+        //{
+        //    arr[i] = encoding.GetBytes(s3FilePaths[i]);
+        //}
+        //WWWForm wwwForm = new WWWForm();
+        //wwwForm.AddField("email", userEmail);
+        //wwwForm.AddField("space", spaceName);
+        //wwwForm.AddBinaryData("files", arr);
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers["content-type"] = "application/json";
+        WWW www = new WWW(server_url + signed_url_endpoint, jsonBytes, headers);
+        StartCoroutine(WaitForRequest(www, "PostImage"));
 
 
         //var client = new Http
