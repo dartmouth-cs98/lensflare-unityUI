@@ -13,16 +13,21 @@ public class UploadImages : MonoBehaviour
     const string signed_url_endpoint = "/sign-s3";
     string[] localFilePaths;
 
+    // for using callbacks in Unity
+    // MODIFY THIS TO CHANGE THE CALLBACK TYPE (if adding arguments, need to pass those down as well)
+    public delegate bool GenericDelegate(); // boolean return type, no arguments
+    private GenericDelegate genDel;
+
     public void Start()
     {
     }
-    public void StartUploadImages(string[] localFilePaths, string[] s3FilePaths, string userEmail, string spaceName)
+    public void StartUploadImages(string[] localFilePaths, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
     {
-        StartCoroutine(Upload(localFilePaths, s3FilePaths, userEmail, spaceName));
+        StartCoroutine(Upload(localFilePaths, s3FilePaths, userEmail, spaceName, cb));
     }
 
 
-    IEnumerator WaitForRequest(WWW www, string mode)
+    IEnumerator WaitForRequest(WWW www, string mode, GenericDelegate cb)
     {
         yield return www;
 
@@ -71,23 +76,31 @@ public class UploadImages : MonoBehaviour
                     print(headers["Expires"]);
                     print(headers["Signature"]);
                     WWW post = new WWW(FileCollection.files[j].signedUrl, imageToUpload, headers);
-                    StartCoroutine(WaitForRequest(post, "IndivudalImage"));
+                    StartCoroutine(WaitForRequest(post, "IndivudalImage", cb));
 
                 }
             }
             else
             {
                 print(www.text);
+
+                // passed callback
+                genDel = cb;
+                genDel();
             }
         }
         else
         {
             Debug.Log(www.error);
+
+            // passed callback <-- should this be called in the error case as well?
+            genDel = cb;
+            genDel();
         }
 
     }
 
-    IEnumerator Upload(string[] userFilePaths, string[] s3FilePaths, string userEmail, string spaceName)
+    IEnumerator Upload(string[] userFilePaths, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
     {
         ASCIIEncoding encoding = new ASCIIEncoding();
         byte[] jsonBytes = encoding.GetBytes(ConstructRequestJson(userEmail, spaceName, s3FilePaths));
@@ -112,7 +125,7 @@ public class UploadImages : MonoBehaviour
         Dictionary<string, string> headers = new Dictionary<string, string>();
         headers["content-type"] = "application/json";
         WWW www = new WWW(server_url + signed_url_endpoint, jsonBytes, headers);
-        StartCoroutine(WaitForRequest(www, "PostImage"));
+        StartCoroutine(WaitForRequest(www, "PostImage", cb));
 
 
         //var client = new Http
