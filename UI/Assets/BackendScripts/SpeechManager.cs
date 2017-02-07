@@ -184,7 +184,7 @@ public class SpeechManager : MonoBehaviour
             s3Paths[i] = ids[i] + ".jpg";
         }
         //localPaths[0] = "aaa.jpg";
-        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "nick@moolenijzer.com", "The MoMA", () => { return true; });
+        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "test@test.com", "CS98", () => { return true; });
         doneAnim.ShrinkCanvas();
 
     }

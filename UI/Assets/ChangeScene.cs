@@ -14,7 +14,7 @@ public class ChangeScene : MonoBehaviour {
     IEnumerator Example()
     {
         yield return new WaitForSeconds(5);
-        SceneManager.LoadScene("PlacementScene");
+        SceneManager.LoadScene("LoadingScene");
     }
 
 }

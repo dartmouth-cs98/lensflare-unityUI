@@ -13,7 +13,7 @@ public class LoadIconData : MonoBehaviour {
 
     const string bucketName = "lensflare-files";
     const string server_url = "http://lensflare-server.herokuapp.com";
-    const string signed_url_endpoint = "/getSpacesUnauth?email=nick@moolenijzer.com";
+    const string signed_url_endpoint = "/getSpacesUnauth?email=test@test.com";
 
     public Dictionary<string, string[]> iconDonwload;
 

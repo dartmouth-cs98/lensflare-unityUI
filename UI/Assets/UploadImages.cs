@@ -82,6 +82,13 @@ public class UploadImages : MonoBehaviour
                         print(req.responseCode);
                         print("Upload worked");
 
+                      
+                        if (File.Exists(localFilePaths[j]))
+                        {
+                            print("Deleting " + localFilePaths[j]);
+                            File.Delete(localFilePaths[j]);
+                        }
+
                         genDel = cb;
                         genDel();
                     }
