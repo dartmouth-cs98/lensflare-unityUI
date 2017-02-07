@@ -7,12 +7,15 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.VR.WSA;
 
 
 // Based on Holograms 101 tutorial 
 public class SpeechManager : MonoBehaviour
 {
     public Rotate rotate;
+    public SpatialMappingRenderer spatialMappingRenderer;
+
     //public TextToSpeechManager tsm;
     TextToSpeechManager tsm;
 
@@ -41,6 +44,9 @@ public class SpeechManager : MonoBehaviour
 
         tsm = GetComponent<TextToSpeechManager>();
 
+
+        spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
+
         //keywords.Add("Next", () => {
         //    print("Closing canvas...");
 
@@ -63,6 +69,16 @@ public class SpeechManager : MonoBehaviour
             SceneManager.LoadScene("LoadingScene");
             //call photo upload method
 
+        });
+
+        keywords.Add("Turn Off Mesh", () => {
+            print("Turning Off Mesh");
+           spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
+        });
+
+        keywords.Add("Turn On Mesh", () => {
+            print("Turning On Mesh");
+            spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.Visualization;
         });
 
         ////////////////////////////////////////////////////////////////////////
@@ -184,7 +200,12 @@ public class SpeechManager : MonoBehaviour
             s3Paths[i] = ids[i] + ".jpg";
         }
         //localPaths[0] = "aaa.jpg";
-        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "test@test.com", "CS98", () => { return true; });
+        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "test@test.com", "CS98", () => {
+            print("About to change to uploading sprite");
+            uploadingAnim.ChangeSprite("uploading");
+            print("Cahnged uploading sprite");
+
+            return true; });
         doneAnim.ShrinkCanvas();
 
     }

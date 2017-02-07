@@ -10,6 +10,7 @@ using UnityEngine.VR.WSA;
 using UnityEngine.Windows.Speech;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using Academy.HoloToolkit.Unity;
 
 public class LoadingSpeechManager : MonoBehaviour
 {
@@ -19,18 +20,30 @@ public class LoadingSpeechManager : MonoBehaviour
     WorldAnchorStore store;
 
     void Start()
-    { 
+    {
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
+        gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.None;
 
         keywords.Add("Create scene", () => {
             print("entering placement mode");
             if (store != null)
             {
+                print("Clearing Store");
                 store.Clear();
             }
             SceneManager.LoadScene("PlacementScene");
-
         });
+
+        keywords.Add("Turn Off Mesh", () => {
+            print("Turning Off Mesh");
+            gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.None;
+        });
+
+        keywords.Add("Turn On Mesh", () => {
+            print("Turning On Mesh");
+            gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.Visualization;
+        });
+
 
         // Tell the KeywordRecognizer about our keywords.
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());

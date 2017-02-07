@@ -12,9 +12,10 @@ public class LoadAnchorIcons : MonoBehaviour {
     LoadIconData lid;
     bool instantiated = false;
     Dictionary<string, GameObject> icons;
+    GameObject[] iconInstances;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
         print("LOADING ANCHORSSSSSS");
         surfaceObserver = new SurfaceObserver();
@@ -24,7 +25,7 @@ public class LoadAnchorIcons : MonoBehaviour {
         icons = new Dictionary<string, GameObject>();
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
 
-        StartCoroutine(UpdateLoop());
+        //StartCoroutine(UpdateLoop());
     }
 	
 	// Update is called once per frame
@@ -34,18 +35,20 @@ public class LoadAnchorIcons : MonoBehaviour {
 
     private void OnSurfaceChanged(SurfaceId surfaceId, SurfaceChange changeType, Bounds bounds, System.DateTime updateTime)
     {
-        print("surface changed");
+        ////print("surface changed");
     }
 
-    IEnumerator UpdateLoop()
+    IEnumerator UpdateLoop(float count)
     {
         print("in update loop");
-        var wait = new WaitForSeconds(2.5f);
-        while (true)
-        {
-            surfaceObserver.Update(OnSurfaceChanged);
-            yield return wait;
-        }
+        yield return new WaitForSeconds(count);
+        AnchorStoreLoaded(this.store);
+        //var wait = new WaitForSeconds(1.0f);
+        //while (true)
+        //{
+        //    surfaceObserver.Update(OnSurfaceChanged);
+        //    yield return wait;
+        //}
     }
 
     public WorldAnchorStore GetAnchorStore()
@@ -59,56 +62,48 @@ public class LoadAnchorIcons : MonoBehaviour {
 
         string[] anchorIds = this.store.GetAllIds();
 
-        if (lid.iconDonwload == null)
+        if (!lid.isDownloadDone())
         {
-            StartCoroutine(UpdateLoop());
+            StartCoroutine(UpdateLoop(0.2f));
             return;
         }
         print("loadanchoricons " + anchorIds.Length + " " + instantiated);
 
+        if (iconInstances == null) iconInstances = new GameObject[anchorIds.Length];
+
         for (int i = 0; i < anchorIds.Length; i++)
         {
-            //print("anchor #:" + anchorIds[i]);
+            print("instantiating");
 
-           // GameObject icon;
-            //if (!instantiated)
-            //{
-                print("instantiating");
-                GameObject icon = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
-                icon.GetComponent<IconInfo>().iconName = anchorIds[i];
-                icons.Add(anchorIds[i], icon);
-            //}
-            //else
-            //{
-            //    icon = icons[anchorIds[i]];
-            //}
-            
+            if (iconInstances[i] == null ) iconInstances[i] = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
+
+            GameObject icon = iconInstances[i];
+            if (icon == null)
+            {
+                print("icon is null");
+            }
+
+            icon.GetComponent<IconInfo>().iconName = anchorIds[i];
+            if (!icons.ContainsKey(anchorIds[i])) icons.Add(anchorIds[i], icon);
+
             WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
-
-            GemBehavior gb = icon.GetComponent<GemBehavior>();
-            gb.SetCanvasText("Testing", "DELETE WHEN UPLOADS FIXED");
-
-            //foreach(string key in lid.iconDonwload.Keys)
-            //{
-            //    print("key: " + key);
-            //}
-
-            //if (lid.iconDonwload.ContainsKey(anchorIds[i]))
-            //{
-            //    //string[] info = lid.iconDonwload[anchorIds[i]];
-            //    //GemBehavior gb = icon.GetComponent<GemBehavior>();
-            //    //print("Text:" + info[1] + "title: " + info[0]);
-            //    ////print("gb" + gb.ToString());
-            //    //gb.SetCanvasText(info[1], info[0]);
-            //}
-            //GemBehavior gb = icon.GetComponent<GemBehavior>();
-            //gb.SetCanvasText("TESTING", "DELETE WHEN UPLOADS ARE FIXED");
-
-
-            //print("loaded anchor position: " + anchor.transform.position);
-            //print("new gameobject position: " + icon.transform.position);
+            print("Loaded anchor" + anchorIds[i]);
+            print(lid.GetIconDownload().ToString());
+            foreach (string key in lid.GetIconDownload().Keys)
+            {
+                print(key);
+            }
+            print("Found ID in dict = " + lid.GetIconDownload().ContainsKey(anchorIds[i]));
+            if (lid.GetIconDownload().ContainsKey(anchorIds[i]))
+            {
+                string[] info = lid.GetIconDownload()[anchorIds[i]];
+                GemBehavior gb = icon.GetComponent<GemBehavior>();
+                print("Text:" + info[1] + "title: " + info[0]);
+                print("gb" + gb.ToString());
+                gb.SetCanvasText(info[0], info[1]);
+            }
         }
+        StartCoroutine(UpdateLoop(10.0f));
 
-        //instantiated = true;
     }
 }

@@ -14,14 +14,26 @@ public class LoadIconData : MonoBehaviour {
     const string bucketName = "lensflare-files";
     const string server_url = "http://lensflare-server.herokuapp.com";
     const string signed_url_endpoint = "/getSpacesUnauth?email=test@test.com";
+    Boolean downloadDone = false; 
 
-    public Dictionary<string, string[]> iconDonwload;
+    Dictionary<string, string[]> iconDonwload;
+
+    public Dictionary<string, string[]> GetIconDownload(){
+        return iconDonwload;
+    }
 
     // Use this for initialization
     void Start () {
-        download();
+        print("About to Download Anchor Data");
+        InvokeRepeating("download", 0.0f, 10.0f);
+        //download();
     }
 	
+    public Boolean isDownloadDone()
+    {
+        return downloadDone;
+    }
+
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown("n"))
@@ -32,6 +44,7 @@ public class LoadIconData : MonoBehaviour {
 
     IEnumerator WaitForRequest(WWW www, string mode)
     {
+        print("In Download CoRoutine");
 
         //        HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
         //        signedUrlRequest.ContentType = "application/json";
@@ -49,6 +62,8 @@ public class LoadIconData : MonoBehaviour {
 
         if (www.error == null)
         {
+            print("Request Successful");
+
             string detections = www.text;
             Debug.Log(detections);
             var parsedResponse = JSON.Parse(detections);
@@ -72,7 +87,7 @@ public class LoadIconData : MonoBehaviour {
                     //print(items[j]["url"]);
                 }
             }
-            
+            downloadDone = true; 
         }
         else
         {
@@ -80,11 +95,15 @@ public class LoadIconData : MonoBehaviour {
         }
         
     }
-
+    string getUTCTime()
+    {
+        System.Int32 unixTimestamp = (System.Int32)(System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;
+        return unixTimestamp.ToString();
+    }
     public void download()
     {
 
-        WWW www = new WWW(server_url + signed_url_endpoint);
+        WWW www = new WWW(server_url + signed_url_endpoint + "&t=" + getUTCTime());
         StartCoroutine(WaitForRequest(www, "GetSpaces"));
 
         //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);

@@ -26,6 +26,7 @@ namespace HoloToolkit.Unity
         [Tooltip("Specifies the axis about which the object will rotate (Free rotates about both X and Y).")]
         public PivotAxis PivotAxis = PivotAxis.Free;
 
+
         /// <summary>
         /// Overrides the cached value of the GameObject's default rotation.
         /// </summary>

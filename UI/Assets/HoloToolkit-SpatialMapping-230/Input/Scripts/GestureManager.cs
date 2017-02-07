@@ -45,8 +45,8 @@ namespace Academy.HoloToolkit.Unity
 
         void Start()
         {
-            iconOffset = GameObject.Find("GemCanvasPrefab").GetComponentInChildren<Collider>().bounds.size.magnitude / 4;
-
+            iconOffset = 0.165583f;// GameObject.Find("GemCanvasPrefab").GetComponentInChildren<Collider>().bounds.size.magnitude / 4;
+            print(iconOffset);
             // Create a new GestureRecognizer. Sign up for tapped events.
             gestureRecognizer = new GestureRecognizer();
             gestureRecognizer.SetRecognizableGestures(GestureSettings.Tap);
