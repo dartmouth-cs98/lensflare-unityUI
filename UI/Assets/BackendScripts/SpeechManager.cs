@@ -174,10 +174,11 @@ public class SpeechManager : MonoBehaviour
             s3Paths[i] = ids[i] + ".jpg";
         }
         //localPaths[0] = "aaa.jpg";
-        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "nick@moolenijzer.com", "The MoMA");
+        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "nick@moolenijzer.com", "The MoMA", () => { return true; });
         doneAnim.ShrinkCanvas();
 
     }
+  
 
     public void doneSetup()
     {
