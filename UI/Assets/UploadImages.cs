@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using Unity;
+using UnityEngine.Networking;
 
 public class UploadImages : MonoBehaviour
 {
@@ -13,16 +15,21 @@ public class UploadImages : MonoBehaviour
     const string signed_url_endpoint = "/sign-s3";
     string[] localFilePaths;
 
+    // for using callbacks in Unity
+    // MODIFY THIS TO CHANGE THE CALLBACK TYPE (if adding arguments, need to pass those down as well)
+    public delegate bool GenericDelegate(); // boolean return type, no arguments
+    private GenericDelegate genDel;
+
     public void Start()
     {
     }
-    public void StartUploadImages(string[] localFilePaths, string[] s3FilePaths, string userEmail, string spaceName)
+    public void StartUploadImages(string[] localFilePaths, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
     {
-        StartCoroutine(Upload(localFilePaths, s3FilePaths, userEmail, spaceName));
+        StartCoroutine(Upload(localFilePaths, s3FilePaths, userEmail, spaceName, cb));
     }
 
 
-    IEnumerator WaitForRequest(WWW www, string mode)
+    IEnumerator WaitForRequest(WWW www, string mode, GenericDelegate cb)
     {
         yield return www;
 
@@ -42,13 +49,12 @@ public class UploadImages : MonoBehaviour
                 {
                     Debug.Log(e);
                 }
-                print(FileCollection);
+
                 byte[] imageToUpload = null;
                 for (int j = 0; j < FileCollection.files.Length; j++)
                 {
                     try
                     {
-                        print(localFilePaths[j]);
                         imageToUpload = File.ReadAllBytes(localFilePaths[j]);
                     }
                     catch (FileNotFoundException e)
@@ -56,44 +62,67 @@ public class UploadImages : MonoBehaviour
                         Debug.Log(e);
                         throw e;
                     }
+                    
+                    //Dictionary<string, string> headers = new Dictionary<string, string>();
+                    //string sUrl = FileCollection.files[j].signedUrl;
+                    //string head = sUrl.Substring(sUrl.IndexOf("=") + 1);
+                    //var heads = head.Split('&');
 
-                    Dictionary<string, string> headers = new Dictionary<string, string>();
-                    string sUrl = FileCollection.files[j].signedUrl;
-                    string head = sUrl.Substring(sUrl.IndexOf("=") + 1);
-                    var heads = head.Split('&');
+                    print(FileCollection.files[j].signedUrl);
+                    UnityWebRequest req = UnityWebRequest.Put(FileCollection.files[j].signedUrl, imageToUpload);
+                    req.SetRequestHeader("Content-Type", "");
+                    yield return req.Send();
 
-                    headers["AWSAccessKeyId"] = heads[0];
-                    headers["Expires"] = heads[1].Substring(heads[1].IndexOf("=") + 1);
-                    headers["Signature"] = heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
-                    headers["authorization"] = "AWS " + heads[0] + ":" + heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
-                    headers["Authorization"] = "AWS " + heads[0] + ":" + heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
-                    print(headers["AWSAccessKeyId"]);
-                    print(headers["Expires"]);
-                    print(headers["Signature"]);
-                    WWW post = new WWW(FileCollection.files[j].signedUrl, imageToUpload, headers);
-                    StartCoroutine(WaitForRequest(post, "IndivudalImage"));
+                    if (req.isError)
+                    {
+                        print(req.error);
+                    }
+                    else
+                    {
+                        print(req.responseCode);
+                        print("Upload worked");
+
+                        genDel = cb;
+                        genDel();
+                    }
+
+                    //headers["AWSAccessKeyId"] = heads[0];
+                    //headers["Expires"] = heads[1].Substring(heads[1].IndexOf("=") + 1);
+                    //headers["Signature"] = heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
+                    //headers["authorization"] = "AWS " + heads[0] + ":" + heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
+                    ////headers["Authorization"] = "AWS " + heads[0] + ":" + heads[2].Substring(heads[2].IndexOf("=") + 1) + "&" + heads[3];
+                    ////print(headers["AWSAccessKeyId"]);
+                    ////print(headers["Expires"]);
+                    ////print(headers["Signature"]);
+                    //WWW post = new WWW(FileCollection.files[j].signedUrl, imageToUpload, headers);
+                    //StartCoroutine(WaitForRequest(post, "IndivudalImage"));
 
                 }
             }
             else
             {
                 print(www.text);
+
+                // passed callback
             }
         }
         else
         {
             Debug.Log(www.error);
+
+            // passed callback <-- should this be called in the error case as well?
+            genDel = cb;
+            genDel();
         }
 
     }
 
-    IEnumerator Upload(string[] userFilePaths, string[] s3FilePaths, string userEmail, string spaceName)
+    IEnumerator Upload(string[] userFilePaths, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
     {
         ASCIIEncoding encoding = new ASCIIEncoding();
         byte[] jsonBytes = encoding.GetBytes(ConstructRequestJson(userEmail, spaceName, s3FilePaths));
         localFilePaths = userFilePaths;
-        print("HERE");
-        print(userFilePaths);
+        
         //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
         //signedUrlRequest.ContentType = "application/json";
         //signedUrlRequest.Method = "POST";
@@ -112,13 +141,9 @@ public class UploadImages : MonoBehaviour
         Dictionary<string, string> headers = new Dictionary<string, string>();
         headers["content-type"] = "application/json";
         WWW www = new WWW(server_url + signed_url_endpoint, jsonBytes, headers);
-        StartCoroutine(WaitForRequest(www, "PostImage"));
-
+        StartCoroutine(WaitForRequest(www, "PostImage", cb));
 
         //var client = new Http
-
-
-
 
         //HttpWebResponse signedUrlResponse = (HttpWebResponse)signedUrlRequest.GetResponse();
         //FileCollection FileCollection = null;

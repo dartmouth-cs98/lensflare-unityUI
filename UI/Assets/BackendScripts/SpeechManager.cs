@@ -183,12 +183,12 @@ public class SpeechManager : MonoBehaviour
             localPaths[i] = System.IO.Path.Combine(Application.persistentDataPath, ids[i] + ".jpg");
             s3Paths[i] = ids[i] + ".jpg";
         }
-        print("HERE2");
-        localPaths[0] = "aaa.jpg";
-        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "nick@moolenijzer.com", "The MoMA");
+        //localPaths[0] = "aaa.jpg";
+        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "nick@moolenijzer.com", "The MoMA", () => { return true; });
         doneAnim.ShrinkCanvas();
 
     }
+  
 
     public void doneSetup()
     {
