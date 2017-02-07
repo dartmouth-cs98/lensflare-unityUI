@@ -33,6 +33,8 @@ public class SpeechManager : MonoBehaviour
     {
         uploadingAnim = GameObject.FindGameObjectWithTag("UploadFlow").GetComponent<CanvasAnimation>();
         doneAnim = GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<CanvasAnimation>();
+        print("done anim" + doneAnim.ToString());
+        print("Grow canvas");
         doneAnim.GrowCanvas();
         //uploadImages = GetComponent<UploadImages>();
         photographer = GetComponent<Photographer>();
@@ -51,6 +53,14 @@ public class SpeechManager : MonoBehaviour
             print("Closing canvas...");
             
             doneSetup();
+            //call photo upload method
+
+        });
+
+        keywords.Add("Change Scene", () => {
+            print("Changing Scene...");
+
+            SceneManager.LoadScene("LoadingScene");
             //call photo upload method
 
         });
@@ -205,9 +215,5 @@ public class SpeechManager : MonoBehaviour
             //setupAnim.GrowCanvas();
         }
 
-        if (Input.GetKeyDown("t"))
-        {
-            SceneManager.LoadScene("DisplayFlow");
-        }
     }
 }

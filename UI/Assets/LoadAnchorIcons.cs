@@ -15,6 +15,8 @@ public class LoadAnchorIcons : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+        print("LOADING ANCHORSSSSSS");
         surfaceObserver = new SurfaceObserver();
         surfaceObserver.SetVolumeAsAxisAlignedBox(Vector3.zero, new Vector3(3, 3, 3));
 

@@ -5,16 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class ChangeScene : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyDown("c"))
-        {
-            SceneManager.LoadScene("FrontScreen");
-        }
-	}
+    // Use this for initialization
+    void Start()
+    {
+        StartCoroutine(Example());
+    }
+
+    IEnumerator Example()
+    {
+        yield return new WaitForSeconds(5);
+        SceneManager.LoadScene("PlacementScene");
+    }
+
 }
