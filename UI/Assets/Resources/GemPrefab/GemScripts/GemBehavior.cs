@@ -7,16 +7,36 @@ public class GemBehavior : MonoBehaviour
 	Animator gem_animator;
 	ParticleSystem sparkle;
 	Animator canvasAnim;
-	SetDialogueText sdt;
+    public	SetDialogueText sdt;
 	bool canvasShowing;
+    GameObject framePanel;
 
 	void Start ()
 	{
 		gem_animator = GetComponent<Animator> ();
 		sparkle = GetComponentInChildren<ParticleSystem> ();
-		GameObject framePanel = GameObject.FindGameObjectWithTag ("FramePanel");
-		canvasAnim = framePanel.GetComponentInChildren<Animator> ();
-		sdt = framePanel.GetComponentInChildren<SetDialogueText> (); 
+		//GameObject framePanel = GameObject.FindGameObjectWithTag ("FramePanel");
+        
+        foreach(Transform child in transform)
+        {
+            if (child.gameObject.tag == "InfoPanel")
+            {
+                framePanel = child.gameObject;
+                canvasAnim = framePanel.GetComponentInChildren<Animator>();
+                //sdt = framePanel.GetComponentInChildren<SetDialogueText>();
+              
+            }
+        }
+
+
+		//canvasAnim = framePanel.GetComponent<Animator> ();
+
+        print("FP:" + framePanel);
+        print("CA:" + canvasAnim);
+		//sdt = framePanel.GetComponent<SetDialogueText> ();
+
+        print("SDT  After instantiate:" + sdt);
+       
 		canvasShowing = false; 
 	}
 	
@@ -35,21 +55,29 @@ public class GemBehavior : MonoBehaviour
 	}
 
 
-	void SetCanvasText (string newText, string newTitle) {
+	public void SetCanvasText (string newText, string newTitle) {
+        if (sdt == null)
+        {
+            print("sdt is null");
+
+        }
 		sdt.ChangeText (newText, newTitle);
 	}
 
-	void ToggleCanvas() {
+	public void ToggleCanvas() {
+        print("toggle Canvas" + canvasShowing.ToString());
 		if (canvasShowing) {
 			canvasAnim.SetTrigger ("Close");
 			canvasShowing = false;
 		} else {
-			canvasAnim.SetTrigger ("Open");
+            print("opening");
+            canvasAnim.SetTrigger ("Open");
+            //canvasAnim.SetBool("OpenCanvas", true);
 			canvasShowing = true;
 		}
 	}
 
-	void Select()
+	public void Select()
 	{
 		gem_animator.SetTrigger ("selectGem");
 		sparkle.Play();

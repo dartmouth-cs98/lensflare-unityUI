@@ -7,9 +7,9 @@ public class CanvasAnimation : MonoBehaviour {
 	Animator anim;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         print("Loading canvas...1");
-        anim = GetComponent<Animator> ();
+        anim = GetComponentInChildren<Animator> ();
         print("Loading canvas...2");
     }
 	
@@ -30,8 +30,9 @@ public class CanvasAnimation : MonoBehaviour {
 	public void ShrinkCanvas() {
 		anim.SetTrigger ("Shrink");
 	}
-
+    
 	public void GrowCanvas() {
+        print("Grow anim" + anim.ToString());
 		anim.SetTrigger("Grow");
 	}
 

@@ -45,8 +45,8 @@ namespace Academy.HoloToolkit.Unity
 
         void Start()
         {
-            iconOffset = GameObject.Find("GemCanvasPrefab").GetComponentInChildren<Collider>().bounds.size.magnitude / 4;
-
+            iconOffset = 0.165583f;// GameObject.Find("GemCanvasPrefab").GetComponentInChildren<Collider>().bounds.size.magnitude / 4;
+            print(iconOffset);
             // Create a new GestureRecognizer. Sign up for tapped events.
             gestureRecognizer = new GestureRecognizer();
             gestureRecognizer.SetRecognizableGestures(GestureSettings.Tap);
@@ -90,7 +90,7 @@ namespace Academy.HoloToolkit.Unity
                     else
                     {
                         RaycastHit hit = GazeManager.Instance.HitInfo;
-                        Vector3 vect = hit.point; //+ (hit.normal * iconOffset);
+                        Vector3 vect = hit.point + (hit.normal * iconOffset);
                         gameObject.GetComponent<IconManager>().PlaceBox(vect);
                     }
                 }
@@ -130,8 +130,8 @@ namespace Academy.HoloToolkit.Unity
                 print("Moving gem");
 
                 RaycastHit hit = GazeManager.Instance.HitInfo;
-                //Vector3 vect = hit.point + (hit.normal * iconOffset);
-                Vector3 vect = hit.point;
+                Vector3 vect = hit.point + (hit.normal * iconOffset);
+                //Vector3 vect = hit.point;
                 draggedGO.transform.position = vect;
             }
         }

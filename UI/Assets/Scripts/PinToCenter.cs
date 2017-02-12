@@ -21,6 +21,7 @@ public class PinToCenter : MonoBehaviour {
 	void Update () {
         //		transform.position = new Vector3(transform.position.x, start + amp * Mathf.Sin (speed * Time.time), transform.position.z);
         gameObject.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f, Camera.main.farClipPlane));
-		//gameObject.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(x, y + amp * Mathf.Sin (speed * Time.time), Camera.main.farClipPlane));
-	}
+        //gameObject.transform.localEulerAngles = Camera.main.transform.localEulerAngles;
+        //gameObject.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(x, y + amp * Mathf.Sin (speed * Time.time), Camera.main.farClipPlane));
+    }
 }
