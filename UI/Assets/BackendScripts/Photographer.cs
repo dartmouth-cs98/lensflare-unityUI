@@ -113,11 +113,17 @@ public class Photographer : MonoBehaviour
     // Cleanup
     void OnStoppedPhotoMode(PhotoCapture.PhotoCaptureResult result)
     {
+        print("Photo mode stopped.");
         photo.Dispose();
         photo = null;
     }
 
-   
+    private void OnDestroy()
+    {
+        print("Stopping photo mode.");
+        photo.StopPhotoModeAsync(OnStoppedPhotoMode);
+    }
+
     // Cleanup on completion
     void OnCapturedPhotoToDisk(PhotoCapture.PhotoCaptureResult result)
     {
