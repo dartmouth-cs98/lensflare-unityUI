@@ -14,6 +14,7 @@ public class UploadImages : MonoBehaviour
     public const string server_url = "http://lensflare-server.herokuapp.com";
     public const string photos_signed_url_endpoint = "/sign-s3-photos";
     public const string signed_url_endpoint = "/sign-s3";
+
     string[] localFilePaths;
     byte[] bArrayToUpload;
 

@@ -12,8 +12,7 @@ public class LoadIconData : MonoBehaviour {
 
 
     const string bucketName = "lensflare-files";
-    const string server_url = "http://lensflare-server.herokuapp.com";
-    const string signed_url_endpoint = "/getSpacesUnauth?email=test@test.com";
+    const string server_url = "http://lensflare-server.herokuapp.com/getSpaceWithToken?token={0}&t={1}";
     Boolean downloadDone = false; 
 
     Dictionary<string, string[]> iconDonwload;
@@ -67,11 +66,11 @@ public class LoadIconData : MonoBehaviour {
             string detections = www.text;
             Debug.Log(detections);
             var parsedResponse = JSON.Parse(detections);
-            JSONNode spaces = parsedResponse["local"]["spaces"];
+            //JSONNode spaces = parsedResponse["local"]["spaces"];
             iconDonwload = new Dictionary<string, string[]>();
-            for (int i = 0; i < spaces.Count; i++)
-            {
-                JSONNode items = spaces[i]["items"];
+            //for (int i = 0; i < spaces.Count; i++)
+            //{
+                JSONNode items = parsedResponse["items"];
                 for (int j = 0; j < items.Count; j++)
                 {
                     string url = items[j]["url"].ToString();
@@ -86,7 +85,7 @@ public class LoadIconData : MonoBehaviour {
                     }
                     //print(items[j]["url"]);
                 }
-            }
+            //}
             downloadDone = true; 
         }
         else
@@ -103,7 +102,14 @@ public class LoadIconData : MonoBehaviour {
     public void download()
     {
 
-        WWW www = new WWW(server_url + signed_url_endpoint + "&t=" + getUTCTime());
+        string deviceToken = PlayerPrefs.GetString("deviceToken","");
+        Debug.Log(deviceToken);
+        if (deviceToken.Equals(""))
+        {
+            deviceToken = "58ac9701dea544a4fbbc9b3b";
+        }
+
+        WWW www = new WWW(String.Format(server_url, deviceToken, getUTCTime()));
         StartCoroutine(WaitForRequest(www, "GetSpaces"));
 
         //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
