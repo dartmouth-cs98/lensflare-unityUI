@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.VR.WSA.Persistence;
 using UnityEngine.VR.WSA;
 using UnityEngine.Windows.Speech;
+using System.Text;
 using System.Linq;
 using UnityEngine.VR.WSA.Sharing;
 
@@ -13,11 +14,15 @@ public class IconManager : MonoBehaviour {
     public WorldAnchorTransferBatch transferBatch;
     Photographer photographer;
     List<byte> anchorByteBuffer = new List<byte>();
+    private int retryCount = 10;
 
     // Use this for initialization
     void Start () {
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
         photographer = GameObject.Find("Main Camera").GetComponent<Photographer>();
+
+
+        StartCoroutine(DownloadWorldAnchor("https://s3.amazonaws.com/lensflare-files/anchors_58ac9701dea544a4fbbc9b3b_1487717841"));
     }
 
     // Update is called once per frame
@@ -107,17 +112,58 @@ public class IconManager : MonoBehaviour {
             // Tell the client that serialization has succeeded.
             // The client can start importing once all the data is received.
             //SendExportSucceededToClient();
-//            print("Export success. Size of anchorbytearr: " + anchorByteArr.Length);
-            ImportWorldAnchor(anchorByteBuffer.ToArray());
+            //            print("Export success. Size of anchorbytearr: " + anchorByteArr.Length);
+
+            // 
+
+            string token = PlayerPrefs.GetString("device_token");
+            if (token == "")
+            {
+                token = "58ac9701dea544a4fbbc9b3b";
+            }
+      
+            string path = "anchors_" + token + "_" + LoadIconData.getUTCTime();
+            Camera.main.GetComponent<UploadImages>().StartUploadByteArray(anchorByteBuffer.ToArray(), path, token, (url) =>
+            {
+                print(path);
+                StartCoroutine(SaveAnchors(path, token, url)); 
+                // save in the db
+                return true; 
+            });
         }
     }
 
-    private int retryCount = 10;
+    IEnumerator SaveAnchors(string path, string token, string url)
+    {
+        print("In Save Anchors");
+        ASCIIEncoding encoding = new ASCIIEncoding();
+        byte[] jsonBytes = encoding.GetBytes("{\"token\":\"" + token + "\", \"anchors\":\"" + url + "\"}");
+
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers["content-type"] = "application/json";
+        WWW www = new WWW("http://lensflare-server.herokuapp.com/addAnchors", jsonBytes, headers);
+
+        yield return www;
+
+        if(www.error != null)
+        {
+            Debug.Log(www.error);
+        }
+    }
+
+    IEnumerator DownloadWorldAnchor(string url)
+    {
+        WWW www = new WWW(url);
+        yield return www;
+        byte[] anchors = www.bytes;
+        print(anchors.Length);
+        //ImportWorldAnchor(anchors);
+    }
+
     private void ImportWorldAnchor(byte[] importedData)
     {
         WorldAnchorTransferBatch.ImportAsync(importedData, OnImportComplete);
     }
-
 
     public void DeleteAnchor(GameObject go)
     {

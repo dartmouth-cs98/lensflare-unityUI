@@ -95,7 +95,7 @@ public class LoadIconData : MonoBehaviour {
         }
         
     }
-    string getUTCTime()
+    public static string getUTCTime()
     {
         System.Int32 unixTimestamp = (System.Int32)(System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;
         return unixTimestamp.ToString();

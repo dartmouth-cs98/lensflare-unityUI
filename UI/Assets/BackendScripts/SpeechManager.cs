@@ -207,15 +207,15 @@ public class SpeechManager : MonoBehaviour
             s3Paths[i] = ids[i] + ".jpg";
         }
         //localPaths[0] = "aaa.jpg";
-        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "test@test.com", "CS98", () => {
+        GetComponent<UploadImages>().StartUploadFiles(localPaths, s3Paths, "test@test.com", "CS98", (url) =>
+        {
             print("About to change to uploading sprite");
             uploadingAnim.ChangeSprite("uploading_finished");
             print("Cahnged uploading sprite");
 
-            return true; });
-
+            return true;
+        });
     }
-  
 
     public void doneSetup()
     {

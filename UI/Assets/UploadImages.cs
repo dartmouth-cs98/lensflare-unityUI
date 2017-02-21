@@ -10,35 +10,36 @@ using UnityEngine.Networking;
 
 public class UploadImages : MonoBehaviour
 {
-    const string bucketName = "lensflare-files";
-    const string server_url = "http://lensflare-server.herokuapp.com";
-    const string signed_url_endpoint = "/sign-s3";
+    public const string bucketName = "lensflare-files";
+    public const string server_url = "http://lensflare-server.herokuapp.com";
+    public const string photos_signed_url_endpoint = "/sign-s3-photos";
+    public const string signed_url_endpoint = "/sign-s3";
     string[] localFilePaths;
     byte[] bArrayToUpload;
 
     // for using callbacks in Unity
     // MODIFY THIS TO CHANGE THE CALLBACK TYPE (if adding arguments, need to pass those down as well)
-    public delegate bool GenericDelegate(); // boolean return type, no arguments
+    public delegate bool GenericDelegate(string url); // boolean return type, no arguments
     private GenericDelegate genDel;
 
     public void Start()
     {
     }
 
-    public void StartUploadFiles(string[] localFilePaths, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
+    public void StartUploadFiles(string[] filePaths, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
     {
-        localFilePaths = userFilePaths;
+        localFilePaths = filePaths;
         StartCoroutine(Upload(s3FilePaths, userEmail, spaceName, "PostFiles", cb));
     }
 
-    public void StartUploadByteArrays(byte[] bArray, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
+    public void StartUploadByteArray(byte[] bArray, string s3Path, string token, GenericDelegate cb)
     {
         bArrayToUpload = bArray;
-        StartCoroutine(Upload(s3FilePaths, userEmail, spaceName, "PostBytes", cb));
+        StartCoroutine(UploadGeneric(s3Path, token, "PostBytes", cb));
     }
 
 
-    IEnumerator WaitForRequest(WWW www, string mode, GenericDelegate cb)
+    public IEnumerator WaitForRequest(WWW www, string mode, GenericDelegate cb)
     {
         yield return www;
 
@@ -93,26 +94,25 @@ public class UploadImages : MonoBehaviour
                         }
 
                         genDel = cb;
-                        genDel();
+                        genDel(null);
                     }
                 }
             }
-            else if (mode.equals("PostBytes"))
+            else if (mode.Equals("PostBytes"))
             {
                 string resp = www.text;
-                FileCollection FileCollection = null;
+                FileInfo fileInfo = null;
 
                 try
                 {
-                    FileCollection = JsonUtility.FromJson<FileCollection>(resp);
+                    fileInfo = JsonUtility.FromJson<FileInfo>(resp);
                 }
                 catch (Exception e)
                 {
                     Debug.Log(e);
                 }
 
-                print(FileCollection.files[j].signedUrl);
-                UnityWebRequest req = UnityWebRequest.Put(FileCollection.files[j].signedUrl, bArrayToUpload);
+                UnityWebRequest req = UnityWebRequest.Put(fileInfo.signedUrl, bArrayToUpload);
                 req.SetRequestHeader("Content-Type", "");
                 yield return req.Send();
 
@@ -126,7 +126,7 @@ public class UploadImages : MonoBehaviour
                     print("Upload worked");
 
                     genDel = cb;
-                    genDel();
+                    genDel(fileInfo.url);
                 }
             }
             else
@@ -140,9 +140,23 @@ public class UploadImages : MonoBehaviour
 
             // passed callback <-- should this be called in the error case as well?
             genDel = cb;
-            genDel();
+            genDel(null);
         }
 
+    }
+
+
+    IEnumerator UploadGeneric(string s3Path, string token, string mode, GenericDelegate cb)
+    {
+        ASCIIEncoding encoding = new ASCIIEncoding();
+        print("This is a test");
+        byte[] jsonBytes = encoding.GetBytes(String.Format("{{\"token\":\"{0}\", \"file\":\"{1}\"}}", token, s3Path ));
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers["content-type"] = "application/json";
+        WWW www = new WWW(server_url + signed_url_endpoint, jsonBytes, headers);
+        StartCoroutine(WaitForRequest(www, mode, cb));
+
+        yield return 0;
     }
 
     IEnumerator Upload(string[] s3FilePaths, string userEmail, string spaceName, string mode, GenericDelegate cb)
@@ -152,7 +166,7 @@ public class UploadImages : MonoBehaviour
         
         Dictionary<string, string> headers = new Dictionary<string, string>();
         headers["content-type"] = "application/json";
-        WWW www = new WWW(server_url + signed_url_endpoint, jsonBytes, headers);
+        WWW www = new WWW(server_url + photos_signed_url_endpoint, jsonBytes, headers);
         StartCoroutine(WaitForRequest(www, mode, cb));
 
         yield return 0;
@@ -204,5 +218,14 @@ public class UploadImages : MonoBehaviour
     {
         public string name;
         public Item[] items;
+        public string anchors; 
     }
+
+    [Serializable]
+    public class SignedUrlResponse
+    {
+        public string name;
+        public Item[] items;
+    }
+
 }
