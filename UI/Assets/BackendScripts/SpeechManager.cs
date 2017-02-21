@@ -45,7 +45,7 @@ public class SpeechManager : MonoBehaviour
         tsm = GetComponent<TextToSpeechManager>();
 
 
-        spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
+        //spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
 
         //keywords.Add("Next", () => {
         //    print("Closing canvas...");
@@ -67,6 +67,13 @@ public class SpeechManager : MonoBehaviour
             print("Changing Scene...");
 
             SceneManager.LoadScene("LoadingScene");
+            //call photo upload method
+
+        });
+
+        keywords.Add("Export Anchors", () => {
+
+            GameObject.Find("Cursor_box").GetComponent<IconManager>().MakeTransferBatch();
             //call photo upload method
 
         });
@@ -200,16 +207,15 @@ public class SpeechManager : MonoBehaviour
             s3Paths[i] = ids[i] + ".jpg";
         }
         //localPaths[0] = "aaa.jpg";
-        GetComponent<UploadImages>().StartUploadImages(localPaths, s3Paths, "test@test.com", "CS98", () => {
+        GetComponent<UploadImages>().StartUploadFiles(localPaths, s3Paths, "test@test.com", "CS98", (url) =>
+        {
             print("About to change to uploading sprite");
-            uploadingAnim.ChangeSprite("uploading");
+            uploadingAnim.ChangeSprite("uploading_finished");
             print("Cahnged uploading sprite");
 
-            return true; });
-        doneAnim.ShrinkCanvas();
-
+            return true;
+        });
     }
-  
 
     public void doneSetup()
     {
