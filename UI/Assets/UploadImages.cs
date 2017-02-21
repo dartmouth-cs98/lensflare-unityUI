@@ -12,7 +12,7 @@ public class UploadImages : MonoBehaviour
 {
     const string bucketName = "lensflare-files";
     const string server_url = "http://lensflare-server.herokuapp.com";
-    const string signed_url_endpoint = "/sign-s3";
+    const string signed_url_endpoint = "/sign-s3-photos";
     string[] localFilePaths;
 
     // for using callbacks in Unity

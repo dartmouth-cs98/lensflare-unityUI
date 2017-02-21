@@ -12,7 +12,7 @@ public class LoadIconData : MonoBehaviour {
 
 
     const string bucketName = "lensflare-files";
-    const string server_url = "http://lensflare-server.herokuapp.com/getSpaceWithToken?token=58a9ddfcccd5a5001c1ccb00";
+    const string server_url = "http://lensflare-server.herokuapp.com/getSpaceWithToken?token={0}&t={1}";
     Boolean downloadDone = false; 
 
     Dictionary<string, string[]> iconDonwload;
@@ -102,7 +102,14 @@ public class LoadIconData : MonoBehaviour {
     public void download()
     {
 
-        WWW www = new WWW(server_url + "&t=" + getUTCTime());
+        string deviceToken = PlayerPrefs.GetString("deviceToken","");
+        Debug.Log(deviceToken);
+        if (deviceToken.Equals(""))
+        {
+            deviceToken = "58ac9701dea544a4fbbc9b3b";
+        }
+
+        WWW www = new WWW(String.Format(server_url, deviceToken, getUTCTime()));
         StartCoroutine(WaitForRequest(www, "GetSpaces"));
 
         //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
