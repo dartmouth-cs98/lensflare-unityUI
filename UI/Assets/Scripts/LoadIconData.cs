@@ -2,11 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
 using SimpleJSON;
-
+using UnityEngine.SceneManagement;
 
 public class LoadIconData : MonoBehaviour {
 
@@ -15,9 +12,9 @@ public class LoadIconData : MonoBehaviour {
     const string server_url = "http://lensflare-server.herokuapp.com/getSpaceWithToken?token={0}&t={1}";
     Boolean downloadDone = false; 
 
-    Dictionary<string, string[]> iconDonwload;
+    Dictionary<string, Item> iconDonwload;
 
-    public Dictionary<string, string[]> GetIconDownload(){
+    public Dictionary<string, Item> GetIconDownload(){
         return iconDonwload;
     }
 
@@ -65,31 +62,31 @@ public class LoadIconData : MonoBehaviour {
 
             string detections = www.text;
             Debug.Log(detections);
-            var parsedResponse = JSON.Parse(detections);
-            //JSONNode spaces = parsedResponse["local"]["spaces"];
-            iconDonwload = new Dictionary<string, string[]>();
-            //for (int i = 0; i < spaces.Count; i++)
-            //{
-                JSONNode items = parsedResponse["items"];
-                for (int j = 0; j < items.Count; j++)
+            Space parsedResponse = JsonUtility.FromJson<Space>(detections);
+            iconDonwload = new Dictionary<string, Item>();
+            Item[] items = parsedResponse.items;
+            for (int j = 0; j < items.Length; j++)
+            {
+
+                Item item = items[j];
+                item.iconName = item.url.Split('/')[3].Split('.')[0];
+
+                if (!iconDonwload.ContainsKey(item.iconName))
                 {
-                    string url = items[j]["url"].ToString();
-                    string iconName = url.Split('/')[3].Split('.')[0];
-                    //print(iconName);
-
-                    string[] info = new string[] { items[j]["title"], items[j]["text"] };
-
-                    if (!iconDonwload.ContainsKey(iconName))
-                    {
-                        iconDonwload.Add(iconName, info);
-                    }
-                    //print(items[j]["url"]);
+                    iconDonwload.Add(item.iconName, item);
                 }
-            //}
+
+            }
             downloadDone = true; 
         }
         else
         {
+            if (www.error.Contains("401"))
+            {
+                // alert the user that the token no longer works
+                print("Token is not valid");
+                SceneManager.LoadScene("PairingScene");
+            }
             Debug.Log(www.error);
         }
         
@@ -102,13 +99,13 @@ public class LoadIconData : MonoBehaviour {
     public void download()
     {
 
-        string deviceToken = PlayerPrefs.GetString("deviceToken","");
+        string deviceToken = PlayerPrefs.GetString("device_token","");
         Debug.Log(deviceToken);
         if (deviceToken.Equals(""))
         {
-            deviceToken = "58ac9701dea544a4fbbc9b3b";
+            SceneManager.LoadScene("PairingScene");
         }
-
+        Debug.Log("this is happening right now");
         WWW www = new WWW(String.Format(server_url, deviceToken, getUTCTime()));
         StartCoroutine(WaitForRequest(www, "GetSpaces"));
 
@@ -136,5 +133,30 @@ public class LoadIconData : MonoBehaviour {
         //reader.Close();
         //signedUrlResponse.Close();
 
+    }
+
+    [Serializable]
+    public class Item
+    {
+        public string title;
+        public string text;
+        public string url;
+        public string iconName;
+        public Media media;
+    }
+
+    [Serializable]
+    public class Space
+    {
+        public Item[] items;
+    }
+
+    [Serializable]
+    public class Media
+    {
+        public string type;
+        public int height;
+        public int width;
+        public string media_url; 
     }
 }

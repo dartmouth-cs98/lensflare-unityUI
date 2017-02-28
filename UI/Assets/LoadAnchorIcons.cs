@@ -40,7 +40,6 @@ public class LoadAnchorIcons : MonoBehaviour {
 
     IEnumerator UpdateLoop(float count)
     {
-        print("in update loop");
         yield return new WaitForSeconds(count);
         AnchorStoreLoaded(this.store);
         //var wait = new WaitForSeconds(1.0f);
@@ -83,10 +82,12 @@ public class LoadAnchorIcons : MonoBehaviour {
                 print("icon is null");
             }
 
-            icon.GetComponent<IconInfo>().iconName = anchorIds[i];
+//            icon.GetComponent<IconInfo>().iconName = anchorIds[i];
             if (!icons.ContainsKey(anchorIds[i])) icons.Add(anchorIds[i], icon);
 
             WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
+
+            // Prints
             print("Loaded anchor" + anchorIds[i]);
             print(lid.GetIconDownload().ToString());
             foreach (string key in lid.GetIconDownload().Keys)
@@ -94,13 +95,15 @@ public class LoadAnchorIcons : MonoBehaviour {
                 print(key);
             }
             print("Found ID in dict = " + lid.GetIconDownload().ContainsKey(anchorIds[i]));
+
             if (lid.GetIconDownload().ContainsKey(anchorIds[i]))
             {
-                string[] info = lid.GetIconDownload()[anchorIds[i]];
+                LoadIconData.Item info = lid.GetIconDownload()[anchorIds[i]];
+                icon.GetComponent<IconInfo>().info = info;
                 GemBehavior gb = icon.GetComponent<GemBehavior>();
-                print("Text:" + info[1] + "title: " + info[0]);
+                print("Text:" + info.text + "title: " + info.title);
                 print("gb" + gb.ToString());
-                gb.SetCanvasText(info[0], info[1]);
+                gb.SetCanvasText(info.title, info.text);
             }
         }
         StartCoroutine(UpdateLoop(10.0f));

@@ -44,6 +44,13 @@ public class LoadingSpeechManager : MonoBehaviour
             gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.Visualization;
         });
 
+        keywords.Add("Pair Device", () => {
+            print("Pair Device");
+            SceneManager.LoadScene("PairingScene");
+        });
+
+
+
 
         // Tell the KeywordRecognizer about our keywords.
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());

@@ -58,43 +58,7 @@ namespace Academy.HoloToolkit.Unity
 
         private void GestureRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
         {
-            if (focusedObject != null)
-            {
-                IconManager iconManager = gameObject.GetComponent<IconManager>();
-
-                if (dragging)
-                {
-                    print("done dragging");
-                    dragging = false;
-                    //draggedGO.layer = 0;
-                    //draggedGO.transform.GetChild(0).gameObject.layer = 0;
-                    draggedGO.transform.FindChild("GemWrapper").transform.FindChild("Gem").gameObject.layer = 0;
-                    iconManager.SaveAnchor(draggedGO);
-                }
-                else
-                { 
-                    print(focusedObject);
-
-                    if (focusedObject.tag == "Gem")
-                    {
-                        //GemBehavior gb = focusedObject.transform.parent.GetComponent<GemBehavior>();
-                        //gb.Select();
-                        print("Setting dragging" + focusedObject);
-                        dragging = true;
-                        draggedGO = focusedObject.transform.parent.transform.parent.transform.gameObject;
-                        //draggedGO.layer = 2;
-                        //draggedGO.transform.GetChild(0).gameObject.layer = 2;
-                        focusedObject.gameObject.layer = 2;
-                        iconManager.DeleteAnchor(draggedGO);
-                    }
-                    else
-                    {
-                        RaycastHit hit = GazeManager.Instance.HitInfo;
-                        Vector3 vect = hit.point + (hit.normal * iconOffset);
-                        gameObject.GetComponent<IconManager>().PlaceBox(vect);
-                    }
-                }
-            } 
+            SelectGem();
         }
 
         void LateUpdate()
@@ -127,11 +91,8 @@ namespace Academy.HoloToolkit.Unity
 
             if (dragging)
             {
-                print("Moving gem");
-
                 RaycastHit hit = GazeManager.Instance.HitInfo;
                 Vector3 vect = hit.point + (hit.normal * iconOffset);
-                //Vector3 vect = hit.point;
                 draggedGO.transform.position = vect;
             }
         }
@@ -141,5 +102,42 @@ namespace Academy.HoloToolkit.Unity
             gestureRecognizer.StopCapturingGestures();
             gestureRecognizer.TappedEvent -= GestureRecognizer_TappedEvent;
         }
+
+        public void SelectGem()
+        {
+            if (focusedObject != null)
+            {
+                IconManager iconManager = gameObject.GetComponent<IconManager>();
+
+                if (dragging)
+                {
+                    print("done dragging");
+                    dragging = false;
+                    draggedGO.transform.FindChild("GemWrapper").transform.FindChild("Gem").gameObject.layer = 0;
+                    iconManager.SaveAnchor(draggedGO);
+                }
+                else
+                {
+                    print(focusedObject);
+
+                    if (focusedObject.tag == "Gem")
+                    {
+                        //GemBehavior gb = focusedObject.transform.parent.GetComponent<GemBehavior>();
+                        //gb.Select();
+                        print("Setting dragging" + focusedObject);
+                        dragging = true;
+                        draggedGO = focusedObject.transform.parent.transform.parent.transform.gameObject;
+                        focusedObject.gameObject.layer = 2;
+                        iconManager.DeleteAnchor(draggedGO);
+                    }
+                    else
+                    {
+                        RaycastHit hit = GazeManager.Instance.HitInfo;
+                        Vector3 vect = hit.point + (hit.normal * iconOffset);
+                        gameObject.GetComponent<IconManager>().PlaceBox(vect);
+                    }
+                }
+            }
+        } 
     }
 }

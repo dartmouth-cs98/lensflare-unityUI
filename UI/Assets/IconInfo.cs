@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class IconInfo : MonoBehaviour {
 
-    public string iconName;
+    //public string iconName;
+    public LoadIconData.Item info;
 
 	// Use this for initialization
 	void Start () {

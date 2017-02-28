@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VR.WSA.Persistence;
 using UnityEngine.VR.WSA;
-using UnityEngine.Windows.Speech;
 using System.Text;
-using System.Linq;
 using UnityEngine.VR.WSA.Sharing;
 
 public class IconManager : MonoBehaviour {
+
+    const string ADD_ANCHOR_ENDPOINT = "http://lensflare-server.herokuapp.com/addAnchors";
 
     WorldAnchorStore store;
     public WorldAnchorTransferBatch transferBatch;
@@ -20,8 +20,6 @@ public class IconManager : MonoBehaviour {
     void Start () {
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
         photographer = GameObject.Find("Main Camera").GetComponent<Photographer>();
-
-
         StartCoroutine(DownloadWorldAnchor("https://s3.amazonaws.com/lensflare-files/anchors_58ac9701dea544a4fbbc9b3b_1487717841"));
     }
 
@@ -36,7 +34,6 @@ public class IconManager : MonoBehaviour {
         {
             print("uploading...");
             GameObject.Find("Main Camera").GetComponent<SpeechManager>().PerformImageUpload();
-
         }
 
         if (Input.GetKeyDown("w"))
@@ -54,21 +51,11 @@ public class IconManager : MonoBehaviour {
             {
                 anchor = go.AddComponent<WorldAnchor>();
 
-                // Adding makes anchoring fail on hololens
-
-                //if (anchor.isLocated)
-                //{
-                string iconName = go.GetComponent<IconInfo>().iconName;
+                string iconName = go.GetComponent<IconInfo>().info.iconName;
                 print("saving :" + iconName + " @" +anchor.transform.position);
                 this.store.Save(iconName, anchor);
 
-
                 photographer.TakePicture(iconName, true);  
-               // }
-                //else
-                //{
-                //    anchor.OnTrackingChanged += Anchor_OnTrackingChanged;
-                //}
             }
         }
     }
@@ -81,7 +68,7 @@ public class IconManager : MonoBehaviour {
         foreach(GameObject gem in gems)
         {
             print("adding anchor");
-            string name = gem.GetComponent<IconInfo>().iconName;
+            string name = gem.GetComponent<IconInfo>().info.iconName;
             WorldAnchor anchor = this.store.Load(name, gem);
             this.transferBatch.AddWorldAnchor(name, anchor);
         }
@@ -93,8 +80,6 @@ public class IconManager : MonoBehaviour {
     private void OnExportDataAvailable(byte[] data)
     {
         // Send the bytes to the client.  Data may also be buffered.
-        //TransferDataToClient(data);
-        //print("Anchor export data available: " + data.Length);
         anchorByteBuffer.AddRange(data);
     }
 
@@ -104,18 +89,12 @@ public class IconManager : MonoBehaviour {
         {
             // If we have been transferring data and it failed, 
             // tell the client to discard the data
-            //SendExportFailedToClient();
             print("Export failed");
         }
         else
         {
             // Tell the client that serialization has succeeded.
             // The client can start importing once all the data is received.
-            //SendExportSucceededToClient();
-            //            print("Export success. Size of anchorbytearr: " + anchorByteArr.Length);
-
-            // 
-
             string token = PlayerPrefs.GetString("device_token");
             if (token == "")
             {
@@ -141,7 +120,7 @@ public class IconManager : MonoBehaviour {
 
         Dictionary<string, string> headers = new Dictionary<string, string>();
         headers["content-type"] = "application/json";
-        WWW www = new WWW("http://lensflare-server.herokuapp.com/addAnchors", jsonBytes, headers);
+        WWW www = new WWW(ADD_ANCHOR_ENDPOINT, jsonBytes, headers);
 
         yield return www;
 
@@ -168,7 +147,7 @@ public class IconManager : MonoBehaviour {
     public void DeleteAnchor(GameObject go)
     {
         print("deleting anchor" + go);
-        this.store.Delete(go.GetComponent<IconInfo>().iconName);
+        this.store.Delete(go.GetComponent<IconInfo>().info.iconName);
  
         DestroyImmediate(go.GetComponent<WorldAnchor>());
     }
@@ -181,9 +160,7 @@ public class IconManager : MonoBehaviour {
         icon.transform.position = vect;
 
         string iconName = "icon_" + System.DateTime.Now.ToString("MMddyyHmmssfff");
-        icon.GetComponent<IconInfo>().iconName = iconName;
-        //print("instantiating " + iconName + " at " + vect);
-
+        icon.GetComponent<IconInfo>().info.iconName = iconName;
         SaveAnchor(icon);
     }
 
@@ -214,7 +191,7 @@ public class IconManager : MonoBehaviour {
         {
             print("anchor #:" + anchorIds[i]);
             GameObject icon = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
-            icon.GetComponent<IconInfo>().iconName = anchorIds[i];
+            icon.GetComponent<IconInfo>().info.iconName = anchorIds[i];
             //WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
             this.transferBatch.LockObject(anchorIds[i], icon);
         }
@@ -223,7 +200,6 @@ public class IconManager : MonoBehaviour {
     private void AnchorStoreLoaded(WorldAnchorStore store)
     {
         this.store = store;
-
     }
 
     private void Anchor_OnTrackingChanged(WorldAnchor anchor, bool located)

@@ -8,6 +8,9 @@ using System.Net;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.VR.WSA;
+using UnityEngine.VR.WSA.Input;
+using Academy.HoloToolkit.Unity;
+
 
 
 // Based on Holograms 101 tutorial 
@@ -59,7 +62,7 @@ public class SpeechManager : MonoBehaviour
             print("Closing canvas...");
             
             doneSetup();
-            //call photo upload method
+            //calls photo upload, export anchors methods
 
         });
 
@@ -71,6 +74,12 @@ public class SpeechManager : MonoBehaviour
 
         });
 
+        keywords.Add("Select", () =>
+        {
+            GameObject.Find("Cursor_box").GetComponent<GestureManager>().SelectGem();
+        });
+
+        // To be removed
         keywords.Add("Export Anchors", () => {
 
             GameObject.Find("Cursor_box").GetComponent<IconManager>().MakeTransferBatch();
@@ -223,6 +232,7 @@ public class SpeechManager : MonoBehaviour
         uploadingAnim.GrowCanvas();
         doneAnim.ShrinkCanvas();
         PerformImageUpload();
+        GameObject.Find("Cursor_box").GetComponent<IconManager>().MakeTransferBatch();
     }
 
     void Update()
