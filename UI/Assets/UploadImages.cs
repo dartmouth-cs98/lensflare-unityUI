@@ -63,39 +63,38 @@ public class UploadImages : MonoBehaviour
                 byte[] fileToUpload = null;
                 for (int j = 0; j < FileCollection.files.Length; j++)
                 {
-                    try
+                    if (File.Exists(localFilePaths[j]))
                     {
-                        fileToUpload = File.ReadAllBytes(localFilePaths[j]);
-                    }
-                    catch (FileNotFoundException e)
-                    {
-                        Debug.Log(e);
-                        throw e;
-                    }
-
-                    print(FileCollection.files[j].signedUrl);
-                    UnityWebRequest req = UnityWebRequest.Put(FileCollection.files[j].signedUrl, fileToUpload);
-                    req.SetRequestHeader("Content-Type", "");
-                    yield return req.Send();
-
-                    if (req.isError)
-                    {
-                        print(req.error);
-                    }
-                    else
-                    {
-                        print(req.responseCode);
-                        print("Upload worked");
-
-                      
-                        if (File.Exists(localFilePaths[j]))
+                        try
                         {
-                            print("Deleting " + localFilePaths[j]);
-                            File.Delete(localFilePaths[j]);
+                            fileToUpload = File.ReadAllBytes(localFilePaths[j]);
+                        }
+                        catch (FileNotFoundException e)
+                        {
+                            Debug.Log(e);
+                            throw e;
                         }
 
-                        genDel = cb;
-                        genDel(null);
+                        print(FileCollection.files[j].signedUrl);
+                        UnityWebRequest req = UnityWebRequest.Put(FileCollection.files[j].signedUrl, fileToUpload);
+                        req.SetRequestHeader("Content-Type", "");
+                        yield return req.Send();
+
+                        if (req.isError)
+                        {
+                            print(req.error);
+                        }
+                        else
+                        {
+                            print(req.responseCode);
+                            print("Image upload worked");
+
+                            print("Deleting " + localFilePaths[j]);
+                            File.Delete(localFilePaths[j]);
+
+                            genDel = cb;
+                            genDel(null);
+                        }
                     }
                 }
             }
@@ -124,7 +123,7 @@ public class UploadImages : MonoBehaviour
                 else
                 {
                     print(req.responseCode);
-                    print("Upload worked");
+                    print("Byte upload worked");
 
                     genDel = cb;
                     genDel(fileInfo.url);

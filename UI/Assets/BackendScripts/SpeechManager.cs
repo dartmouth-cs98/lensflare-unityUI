@@ -5,7 +5,6 @@ using UnityEngine.Windows.Speech;
 using HoloToolkit.Unity;
 using System;
 using System.Net;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.VR.WSA;
 using UnityEngine.VR.WSA.Input;
@@ -47,6 +46,13 @@ public class SpeechManager : MonoBehaviour
 
         tsm = GetComponent<TextToSpeechManager>();
 
+        string deviceToken = PlayerPrefs.GetString("device_token", "");
+        Debug.Log(deviceToken);
+        if (deviceToken.Equals(""))
+        {
+            SceneManager.LoadScene("PairingScene");
+            return;
+        }
 
         //spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
 
@@ -70,19 +76,6 @@ public class SpeechManager : MonoBehaviour
             print("Changing Scene...");
 
             SceneManager.LoadScene("LoadingScene");
-            //call photo upload method
-
-        });
-
-        keywords.Add("Select", () =>
-        {
-            GameObject.Find("Cursor_box").GetComponent<GestureManager>().SelectGem();
-        });
-
-        // To be removed
-        keywords.Add("Export Anchors", () => {
-
-            GameObject.Find("Cursor_box").GetComponent<IconManager>().MakeTransferBatch();
             //call photo upload method
 
         });
@@ -218,11 +211,7 @@ public class SpeechManager : MonoBehaviour
         //localPaths[0] = "aaa.jpg";
 
         string deviceToken = PlayerPrefs.GetString("device_token", "");
-        Debug.Log(deviceToken);
-        if (deviceToken.Equals(""))
-        {
-            SceneManager.LoadScene("PairingScene");
-        }
+
         Debug.Log("this is happening right now");
         Debug.Log("device token: " + deviceToken);
         GetComponent<UploadImages>().StartUploadFiles(localPaths, s3Paths, deviceToken, (url) =>

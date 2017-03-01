@@ -20,7 +20,7 @@ public class IconManager : MonoBehaviour {
     void Start () {
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
         photographer = GameObject.Find("Main Camera").GetComponent<Photographer>();
-        StartCoroutine(DownloadWorldAnchor("https://s3.amazonaws.com/lensflare-files/anchors_58ac9701dea544a4fbbc9b3b_1487717841"));
+        //StartCoroutine(DownloadWorldAnchor("https://s3.amazonaws.com/lensflare-files/anchors_58ac9701dea544a4fbbc9b3b_1487717841"));
     }
 
     // Update is called once per frame
@@ -104,7 +104,7 @@ public class IconManager : MonoBehaviour {
             string path = "anchors_" + token + "_" + LoadIconData.getUTCTime();
             Camera.main.GetComponent<UploadImages>().StartUploadByteArray(anchorByteBuffer.ToArray(), path, token, (url) =>
             {
-                print(path);
+                print("PATH: " + path);
                 StartCoroutine(SaveAnchors(path, token, url)); 
                 // save in the db
                 return true; 
@@ -136,7 +136,7 @@ public class IconManager : MonoBehaviour {
         yield return www;
         byte[] anchors = www.bytes;
         print(anchors.Length);
-        //ImportWorldAnchor(anchors);
+        ImportWorldAnchor(anchors);
     }
 
     private void ImportWorldAnchor(byte[] importedData)
@@ -155,7 +155,7 @@ public class IconManager : MonoBehaviour {
     public void PlaceBox(Vector3 vect)
     {
         
-        GameObject icon = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
+        GameObject icon = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
         print("ICON" + icon);
         icon.transform.position = vect;
 
@@ -190,7 +190,7 @@ public class IconManager : MonoBehaviour {
         for (int i = 0; i < anchorIds.Length; i++)
         {
             print("anchor #:" + anchorIds[i]);
-            GameObject icon = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
+            GameObject icon = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
             icon.GetComponent<IconInfo>().info.iconName = anchorIds[i];
             //WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
             this.transferBatch.LockObject(anchorIds[i], icon);

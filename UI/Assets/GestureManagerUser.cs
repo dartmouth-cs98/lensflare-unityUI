@@ -59,8 +59,8 @@ namespace HoloToolkit.Unity
                 {
                     print("Tapped gem");
                     GameObject gemPrefab = focusedObject.transform.parent.transform.parent.transform.gameObject;
-                    //gemPrefab.GetComponent<GemBehavior>().Select();
-                    gemPrefab.GetComponent<GemBehavior>().ToggleCanvas();
+                    gemPrefab.GetComponent<GemBehavior>().Select();
+                    //gemPrefab.GetComponent<GemBehavior>().ToggleCanvas();
                 }
 
             }

@@ -74,7 +74,7 @@ public class LoadAnchorIcons : MonoBehaviour {
         {
             print("instantiating");
 
-            if (iconInstances[i] == null ) iconInstances[i] = Instantiate(Resources.Load("GemCanvasPrefab")) as GameObject;
+            if (iconInstances[i] == null ) iconInstances[i] = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
 
             GameObject icon = iconInstances[i];
             if (icon == null)
@@ -106,7 +106,7 @@ public class LoadAnchorIcons : MonoBehaviour {
                 gb.SetCanvasText(info.title, info.text);
             }
         }
-        StartCoroutine(UpdateLoop(10.0f));
+        StartCoroutine(UpdateLoop(60.0f));
 
     }
 }

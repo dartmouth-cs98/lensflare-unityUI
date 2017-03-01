@@ -68,6 +68,7 @@ public class Placeholder : MonoBehaviour
                     if (result.Text != null)
                     {
                         PlayerPrefs.SetString("device_token", result.Text);
+                        PlayerPrefs.Save();
                         canvas.GetComponentInChildren<Text>().text = "Sucessfully Paired Device";
                         print(result.Text);
                         StartCoroutine(SwitchScene());
@@ -82,7 +83,7 @@ public class Placeholder : MonoBehaviour
                 },
                 false);
             },
-            TimeSpan.FromSeconds(30));
+            TimeSpan.FromSeconds(10));
 #endif
 
     }
@@ -90,9 +91,8 @@ public class Placeholder : MonoBehaviour
     IEnumerator SwitchScene()
     {
         yield return new WaitForSeconds(3);
+        print("Trying to load LoadingScene");
         SceneManager.LoadScene("LoadingScene");
-
-
 
     }
     public void OnReset()
