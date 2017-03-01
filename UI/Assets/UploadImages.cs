@@ -27,10 +27,10 @@ public class UploadImages : MonoBehaviour
     {
     }
 
-    public void StartUploadFiles(string[] filePaths, string[] s3FilePaths, string userEmail, string spaceName, GenericDelegate cb)
+    public void StartUploadFiles(string[] filePaths, string[] s3FilePaths, string deviceToken, GenericDelegate cb)
     {
         localFilePaths = filePaths;
-        StartCoroutine(Upload(s3FilePaths, userEmail, spaceName, "PostFiles", cb));
+        StartCoroutine(Upload(s3FilePaths, deviceToken, "PostFiles", cb));
     }
 
     public void StartUploadByteArray(byte[] bArray, string s3Path, string token, GenericDelegate cb)
@@ -160,10 +160,10 @@ public class UploadImages : MonoBehaviour
         yield return 0;
     }
 
-    IEnumerator Upload(string[] s3FilePaths, string userEmail, string spaceName, string mode, GenericDelegate cb)
+    IEnumerator Upload(string[] s3FilePaths, string deviceToken, string mode, GenericDelegate cb)
     {
         ASCIIEncoding encoding = new ASCIIEncoding();
-        byte[] jsonBytes = encoding.GetBytes(ConstructRequestJson(userEmail, spaceName, s3FilePaths));
+        byte[] jsonBytes = encoding.GetBytes(ConstructRequestJson(deviceToken, s3FilePaths));
         
         Dictionary<string, string> headers = new Dictionary<string, string>();
         headers["content-type"] = "application/json";
@@ -174,9 +174,9 @@ public class UploadImages : MonoBehaviour
     }
 
     // shouldn't need to be changed?
-    string ConstructRequestJson(string userEmail, string spaceName, string[] s3FilePaths)
+    string ConstructRequestJson(string deviceToken, string[] s3FilePaths)
     {
-        string json = "{" +String.Format("\"email\":\"{0}\", \"space\": \"{1}\", \"files\": [", userEmail, spaceName);
+        string json = "{" +String.Format("\"token\":\"{0}\", \"files\": [", deviceToken);
         for (int i = 0; i < s3FilePaths.Length; i++)
         {
             json += "{\"fileName\":\"" + s3FilePaths[i] + "\"}";

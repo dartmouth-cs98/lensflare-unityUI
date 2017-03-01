@@ -216,7 +216,16 @@ public class SpeechManager : MonoBehaviour
             s3Paths[i] = ids[i] + ".jpg";
         }
         //localPaths[0] = "aaa.jpg";
-        GetComponent<UploadImages>().StartUploadFiles(localPaths, s3Paths, "test@test.com", "CS98", (url) =>
+
+        string deviceToken = PlayerPrefs.GetString("device_token", "");
+        Debug.Log(deviceToken);
+        if (deviceToken.Equals(""))
+        {
+            SceneManager.LoadScene("PairingScene");
+        }
+        Debug.Log("this is happening right now");
+        Debug.Log("device token: " + deviceToken);
+        GetComponent<UploadImages>().StartUploadFiles(localPaths, s3Paths, deviceToken, (url) =>
         {
             print("About to change to uploading sprite");
             uploadingAnim.ChangeSprite("uploading_finished");

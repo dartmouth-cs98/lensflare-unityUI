@@ -106,6 +106,7 @@ public class LoadIconData : MonoBehaviour {
             SceneManager.LoadScene("PairingScene");
         }
         Debug.Log("this is happening right now");
+        Debug.Log("device token: " + deviceToken);
         WWW www = new WWW(String.Format(server_url, deviceToken, getUTCTime()));
         StartCoroutine(WaitForRequest(www, "GetSpaces"));
 
