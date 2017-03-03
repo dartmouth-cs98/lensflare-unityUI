@@ -14,13 +14,15 @@ public class LoadIconData : MonoBehaviour {
 
     const string bucketName = "lensflare-files";
     const string server_url = "http://lensflare-server.herokuapp.com/getSpaceWithToken?token={0}&t={1}";
-    Boolean downloadDone = false;
+    bool downloadDone = false;
+    bool iconsAnchored = false;
 
-    Dictionary<string, Item> iconDonwload;
+    // Track icon info to immediately set when gems are instantiated
+    Dictionary<string, Item> iconInfo = new Dictionary<string, Item>();
 
-    public Dictionary<string, Item> GetIconDownload(){
-        return iconDonwload;
-    }
+    // Track gems so updated info can be set immediately on existing gems
+    Dictionary<string, GameObject> icons = new Dictionary<string, GameObject>();
+
 
     // Use this for initialization
     void Start () {
@@ -37,7 +39,7 @@ public class LoadIconData : MonoBehaviour {
         }
     }
 	
-    public Boolean isDownloadDone()
+    public bool isDownloadDone()
     {
         return downloadDone;
     }
@@ -75,14 +77,24 @@ public class LoadIconData : MonoBehaviour {
             string detections = www.text;
             Debug.Log(detections);
             Space parsedResponse = JsonUtility.FromJson<Space>(detections);
-            iconDonwload = new Dictionary<string, Item>();
+            iconInfo.Clear();
 
-            //THIS IS PRINTING NOTHING, 
-            print(parsedResponse.anchors);
-            if (parsedResponse.anchors != null)
+            print(parsedResponse.anchors.Length);
+            if (parsedResponse.anchors == null || parsedResponse.anchors.Length == 0)
             {
+                // TODO error out
+                print("spatial mapping download error");
+            } 
+            else if (iconsAnchored)
+            {
+                print("anchors already loaded");    
+            }
+            else
+            {
+                iconsAnchored = true;
                 StartCoroutine(DownloadWorldAnchor(parsedResponse.anchors));
             }
+
             Item[] items = parsedResponse.items;
             for (int j = 0; j < items.Length; j++)
             {
@@ -90,22 +102,25 @@ public class LoadIconData : MonoBehaviour {
                 Item item = items[j];
                 item.iconName = item.url.Split('/')[3].Split('.')[0];
 
-                if (!iconDonwload.ContainsKey(item.iconName))
+                if (icons.ContainsKey(item.iconName))
                 {
-                    iconDonwload.Add(item.iconName, item);
+                    SetInfo(icons[item.iconName], item);
                 }
-
+                else
+                {
+                    iconInfo.Add(item.iconName, item);
+                }
             }
-            downloadDone = true; 
         }
         else
         {
-            if (www.error.Contains("401"))
+            if (www.error.Contains("401") || www.error.Contains("Access is denied."))
             {
                 // alert the user that the token no longer works
                 print("Token is not valid");
                 SceneManager.LoadScene("PairingScene");
             }
+            print("error");
             Debug.Log(www.error);
         }
         
@@ -126,7 +141,6 @@ public class LoadIconData : MonoBehaviour {
             SceneManager.LoadScene("PairingScene");
             return;
         }
-
 
         Debug.Log("device token: " + deviceToken);
         WWW www = new WWW(String.Format(server_url, deviceToken, getUTCTime()));
@@ -175,11 +189,11 @@ public class LoadIconData : MonoBehaviour {
 
     private void OnImportComplete(SerializationCompletionReason completionReason, WorldAnchorTransferBatch deserializedTransferBatch)
     {
-        //print("deserialized anchor count: " + deserializedTransferBatch.anchorCount);
-
         if (deserializedTransferBatch.anchorCount == 0)
         {
             print("No Anchors going to placement scene");
+            gameObject.GetComponent<LoadingSpeechManager>().ClearAllGems();
+
             SceneManager.LoadScene("PlacementScene");
             return;
         }
@@ -194,18 +208,35 @@ public class LoadIconData : MonoBehaviour {
                 print("retrying with: " + anchorByteBuffer.ToArray().Length);
                 WorldAnchorTransferBatch.ImportAsync(anchorByteBuffer.ToArray(), OnImportComplete);
             }
+            else
+            {
+                iconsAnchored = false;
+            }
             return;
         }
         string[] anchorIds = deserializedTransferBatch.GetAllIds();
 
         for (int i = 0; i < anchorIds.Length; i++)
         {
-            print("anchor #:" + anchorIds[i]);
+            print("load icon anchor #:" + anchorIds[i]);
             GameObject icon = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
-            icon.GetComponent<IconInfo>().info.iconName = anchorIds[i];
-            //WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
-            deserializedTransferBatch.LockObject(anchorIds[i], icon);
+
+            Item info = iconInfo[anchorIds[i]];
+            SetInfo(icon, info);
+            icons[info.iconName] = icon;
+
+            deserializedTransferBatch.LockObject(info.iconName, icon);
         }
+        iconsAnchored = true;
+        downloadDone = true;
+    }
+
+    private void SetInfo(GameObject icon, Item info)
+    {
+        icon.GetComponent<IconInfo>().info = info;
+        GemBehavior gb = icon.GetComponent<GemBehavior>();
+        print("Text:" + info.text + "title: " + info.title);
+        gb.SetCanvasText(info.title, info.text);
     }
 
     [Serializable]

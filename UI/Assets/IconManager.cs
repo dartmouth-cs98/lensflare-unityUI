@@ -20,7 +20,6 @@ public class IconManager : MonoBehaviour {
     void Start () {
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
         photographer = GameObject.Find("Main Camera").GetComponent<Photographer>();
-        //StartCoroutine(DownloadWorldAnchor("https://s3.amazonaws.com/lensflare-files/anchors_58ac9701dea544a4fbbc9b3b_1487717841"));
     }
 
     // Update is called once per frame
@@ -67,8 +66,9 @@ public class IconManager : MonoBehaviour {
         GameObject[] gems = GameObject.FindGameObjectsWithTag("GemCanvas");
         foreach(GameObject gem in gems)
         {
-            print("adding anchor");
+            
             string name = gem.GetComponent<IconInfo>().info.iconName;
+            print("adding anchor with name" + name + " gem " + gem.ToString());
             WorldAnchor anchor = this.store.Load(name, gem);
             this.transferBatch.AddWorldAnchor(name, anchor);
         }
@@ -89,17 +89,19 @@ public class IconManager : MonoBehaviour {
         {
             // If we have been transferring data and it failed, 
             // tell the client to discard the data
-            print("Export failed");
+            print("Export failed - icon manager");
         }
         else
         {
             // Tell the client that serialization has succeeded.
             // The client can start importing once all the data is received.
             string token = PlayerPrefs.GetString("device_token");
-            if (token == "")
-            {
-                token = "58ac9701dea544a4fbbc9b3b";
-            }
+            print("device token is " + token);
+
+            //if (token == "")
+            //{
+            //    token = "58ac9701dea544a4fbbc9b3b";
+            //}
       
             string path = "anchors_" + token + "_" + LoadIconData.getUTCTime();
             Camera.main.GetComponent<UploadImages>().StartUploadByteArray(anchorByteBuffer.ToArray(), path, token, (url) =>
@@ -116,6 +118,7 @@ public class IconManager : MonoBehaviour {
     {
         print("In Save Anchors");
         ASCIIEncoding encoding = new ASCIIEncoding();
+        print("url: " + url);
         byte[] jsonBytes = encoding.GetBytes("{\"token\":\"" + token + "\", \"anchors\":\"" + url + "\"}");
 
         Dictionary<string, string> headers = new Dictionary<string, string>();
@@ -128,20 +131,6 @@ public class IconManager : MonoBehaviour {
         {
             Debug.Log(www.error);
         }
-    }
-
-    IEnumerator DownloadWorldAnchor(string url)
-    {
-        WWW www = new WWW(url);
-        yield return www;
-        byte[] anchors = www.bytes;
-        print(anchors.Length);
-        ImportWorldAnchor(anchors);
-    }
-
-    private void ImportWorldAnchor(byte[] importedData)
-    {
-        WorldAnchorTransferBatch.ImportAsync(importedData, OnImportComplete);
     }
 
     public void DeleteAnchor(GameObject go)
@@ -169,37 +158,15 @@ public class IconManager : MonoBehaviour {
         return this.store;
     }
 
-    private void OnImportComplete(SerializationCompletionReason completionReason, WorldAnchorTransferBatch deserializedTransferBatch)
-    {
-        //print("deserialized anchor count: " + deserializedTransferBatch.anchorCount);
-
-        if (completionReason != SerializationCompletionReason.Succeeded || deserializedTransferBatch.anchorCount == 0)
-        {
-            Debug.Log("Failed to import: " + completionReason.ToString());
-            if (retryCount > 0)
-            {
-                retryCount--;
-
-                print("retrying with: " + anchorByteBuffer.ToArray().Length);
-                WorldAnchorTransferBatch.ImportAsync(anchorByteBuffer.ToArray(), OnImportComplete);
-            }
-            return;
-        }
-        string[] anchorIds = deserializedTransferBatch.GetAllIds();
-
-        for (int i = 0; i < anchorIds.Length; i++)
-        {
-            print("anchor #:" + anchorIds[i]);
-            GameObject icon = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
-            icon.GetComponent<IconInfo>().info.iconName = anchorIds[i];
-            //WorldAnchor anchor = this.store.Load(anchorIds[i], icon);
-            this.transferBatch.LockObject(anchorIds[i], icon);
-        }
-    }
-
     private void AnchorStoreLoaded(WorldAnchorStore store)
     {
         this.store = store;
+        print("existing anchors:");
+
+        for (int i = 0; i < store.GetAllIds().Length; i++)
+        {
+            print("id: " + store.GetAllIds()[i]);
+        }
     }
 
     private void Anchor_OnTrackingChanged(WorldAnchor anchor, bool located)

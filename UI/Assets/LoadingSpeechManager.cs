@@ -26,11 +26,8 @@ public class LoadingSpeechManager : MonoBehaviour
 
         keywords.Add("Create scene", () => {
             print("entering placement mode");
-            if (store != null)
-            {
-                print("Clearing Store");
-                store.Clear();
-            }
+            ClearAllGems();
+
             SceneManager.LoadScene("PlacementScene");
         });
 
@@ -72,6 +69,28 @@ public class LoadingSpeechManager : MonoBehaviour
     private void AnchorStoreLoaded(WorldAnchorStore store)
     {
         this.store = store;
+        print("existing anchors loading:");
+
+        for (int i = 0; i < store.GetAllIds().Length; i++)
+        {
+            print("id: " + store.GetAllIds()[i]);
+        }
+    }
+
+    public void ClearAllGems()
+    {
+        if (store != null)
+        {
+            print("Clearing Store");
+            store.Clear();
+        }
+
+        GameObject[] gems = GameObject.FindGameObjectsWithTag("GemCanvas");
+        foreach (GameObject gem in gems)
+        {
+            GameObject.Destroy(gem);
+        }
+
     }
 
     void Update()
