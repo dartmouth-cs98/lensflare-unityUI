@@ -50,6 +50,20 @@ namespace HoloToolkit.Unity
             gestureRecognizer.StartCapturingGestures();
         }
 
+        private GameObject GetFirstParentWithTag(GameObject go, string tag)
+        {
+            Transform t = go.transform;
+            while (t.parent != null)
+            {
+                if (t.parent.tag == tag)
+                {
+                    return t.parent.gameObject;
+                }
+                t = t.parent;
+            }
+            return null;
+        }
+
         private void GestureRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
         {
             if (focusedObject != null)
@@ -58,9 +72,8 @@ namespace HoloToolkit.Unity
                 if (focusedObject.tag == "Gem")
                 {
                     print("Tapped gem");
-                    GameObject gemPrefab = focusedObject.transform.parent.transform.parent.transform.gameObject;
-                    gemPrefab.GetComponent<GemBehavior>().Select();
-                    //gemPrefab.GetComponent<GemBehavior>().ToggleCanvas();
+                    GameObject prefab = GetFirstParentWithTag(focusedObject, "GemCanvas");
+                    prefab.GetComponent<GemPrefabAnimator>().Select();
                 }
 
             }

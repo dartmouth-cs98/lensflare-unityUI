@@ -55,19 +55,6 @@ public class LoadIconData : MonoBehaviour {
     IEnumerator WaitForRequest(WWW www, string mode)
     {
         print("In Download CoRoutine");
-
-        //        HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
-        //        signedUrlRequest.ContentType = "application/json";
-        //        signedUrlRequest.Method = "GET";
-
-        //        HttpWebResponse signedUrlResponse = (HttpWebResponse)signedUrlRequest.GetResponse();
-        //        print(signedUrlResponse.StatusDescription);
-        //        WebResponse webResponse = signedUrlRequest.GetResponse();
-        //        Stream dataStream = webResponse.GetResponseStream();
-        //        StreamReader reader = new StreamReader(dataStream);
-        //        string response = reader.ReadToEnd();
-        //        print(response);
-
         yield return www;
 
         if (www.error == null)
@@ -145,31 +132,6 @@ public class LoadIconData : MonoBehaviour {
         Debug.Log("device token: " + deviceToken);
         WWW www = new WWW(String.Format(server_url, deviceToken, getUTCTime()));
         StartCoroutine(WaitForRequest(www, "GetSpaces"));
-
-        //HttpWebRequest signedUrlRequest = (HttpWebRequest)WebRequest.Create(server_url + signed_url_endpoint);
-        //signedUrlRequest.ContentType = "application/json";
-        //signedUrlRequest.Method = "GET";
-
-        //HttpWebResponse signedUrlResponse = (HttpWebResponse)signedUrlRequest.GetResponse();
-        //print(signedUrlResponse.StatusDescription);
-        //WebResponse webResponse = signedUrlRequest.GetResponse();
-        //Stream dataStream = webResponse.GetResponseStream();
-        //StreamReader reader = new StreamReader(dataStream);
-        //string response = reader.ReadToEnd();
-        //print(response);
-        //var parsedResponse = JSON.Parse(response);
-        //JSONNode spaces = parsedResponse["local"]["spaces"];
-        //for (int i = 0; i < spaces.Count; i++)
-        //{
-        //    JSONNode items = spaces[i]["items"];
-        //    for (int j = 0; j < items.Count; j++)
-        //    {
-        //        print(items[j]["title"]);
-        //    }
-        //}
-        //reader.Close();
-        //signedUrlResponse.Close();
-
     }
 
 
@@ -234,9 +196,7 @@ public class LoadIconData : MonoBehaviour {
     private void SetInfo(GameObject icon, Item info)
     {
         icon.GetComponent<IconInfo>().info = info;
-        GemBehavior gb = icon.GetComponent<GemBehavior>();
         print("Text:" + info.text + "title: " + info.title);
-        gb.SetCanvasText(info.title, info.text);
     }
 
     [Serializable]

@@ -72,14 +72,6 @@ public class SpeechManager : MonoBehaviour
 
         });
 
-        keywords.Add("Change Scene", () => {
-            print("Changing Scene...");
-
-            SceneManager.LoadScene("LoadingScene");
-            //call photo upload method
-
-        });
-
         keywords.Add("Turn Off Mesh", () => {
             print("Turning Off Mesh");
            spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
@@ -216,10 +208,6 @@ public class SpeechManager : MonoBehaviour
         Debug.Log("device token: " + deviceToken);
         GetComponent<UploadImages>().StartUploadFiles(localPaths, s3Paths, deviceToken, (url) =>
         {
-            print("About to change to uploading sprite");
-            uploadingAnim.ChangeSprite("uploading_finished");
-            print("Cahnged uploading sprite");
-
             return true;
         });
     }
@@ -249,6 +237,5 @@ public class SpeechManager : MonoBehaviour
         {
             //setupAnim.GrowCanvas();
         }
-
     }
 }

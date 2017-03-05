@@ -97,11 +97,6 @@ public class IconManager : MonoBehaviour {
             // The client can start importing once all the data is received.
             string token = PlayerPrefs.GetString("device_token");
             print("device token is " + token);
-
-            //if (token == "")
-            //{
-            //    token = "58ac9701dea544a4fbbc9b3b";
-            //}
       
             string path = "anchors_" + token + "_" + LoadIconData.getUTCTime();
             Camera.main.GetComponent<UploadImages>().StartUploadByteArray(anchorByteBuffer.ToArray(), path, token, (url) =>
@@ -118,7 +113,6 @@ public class IconManager : MonoBehaviour {
     {
         print("In Save Anchors");
         ASCIIEncoding encoding = new ASCIIEncoding();
-        print("url: " + url);
         byte[] jsonBytes = encoding.GetBytes("{\"token\":\"" + token + "\", \"anchors\":\"" + url + "\"}");
 
         Dictionary<string, string> headers = new Dictionary<string, string>();

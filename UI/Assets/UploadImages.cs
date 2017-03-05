@@ -7,6 +7,8 @@ using System.Net;
 using System.Text;
 using Unity;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
+
 
 public class UploadImages : MonoBehaviour
 {
@@ -22,9 +24,23 @@ public class UploadImages : MonoBehaviour
     // MODIFY THIS TO CHANGE THE CALLBACK TYPE (if adding arguments, need to pass those down as well)
     public delegate bool GenericDelegate(string url); // boolean return type, no arguments
     private GenericDelegate genDel;
+    private CanvasAnimation uploadingAnim;
+    private bool imagesUploaded = false;
+    private bool anchorsUploaded = false;
 
     public void Start()
     {
+        uploadingAnim = GameObject.FindGameObjectWithTag("UploadFlow").GetComponent<CanvasAnimation>();
+    }
+
+    void Update()
+    {
+        if (imagesUploaded && anchorsUploaded)
+        {
+            // TODO wait a few seconds
+
+            SceneManager.LoadScene("LoadingScene");
+        }
     }
 
     public void StartUploadFiles(string[] filePaths, string[] s3FilePaths, string deviceToken, GenericDelegate cb)
@@ -91,7 +107,7 @@ public class UploadImages : MonoBehaviour
 
                             print("Deleting " + localFilePaths[j]);
                             File.Delete(localFilePaths[j]);
-
+                            imagesUploaded = true;
                             genDel = cb;
                             genDel(null);
                         }
@@ -125,6 +141,10 @@ public class UploadImages : MonoBehaviour
                     print(req.responseCode);
                     print("Byte upload worked");
 
+                    uploadingAnim.ChangeSprite("uploading_finished");
+                    print("Changed uploading sprite");
+
+                    anchorsUploaded = true;
                     genDel = cb;
                     genDel(fileInfo.url);
                 }
@@ -142,7 +162,6 @@ public class UploadImages : MonoBehaviour
             genDel = cb;
             genDel(null);
         }
-
     }
 
 
