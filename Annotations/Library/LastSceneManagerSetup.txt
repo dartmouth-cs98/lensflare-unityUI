@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/Scoring.unity
-  isLoaded: 1
-  isActive: 1

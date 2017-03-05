@@ -18,7 +18,7 @@ public class LoadingSpeechManager : MonoBehaviour
     void Start()
     {
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
-        gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.None;
+        //gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.None;
 
         keywords.Add("Create scene", () => {
             print("entering placement mode");
@@ -27,15 +27,15 @@ public class LoadingSpeechManager : MonoBehaviour
             SceneManager.LoadScene("PlacementScene");
         });
 
-        keywords.Add("Turn Off Mesh", () => {
-            print("Turning Off Mesh");
-            gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.None;
-        });
+        //keywords.Add("Turn Off Mesh", () => {
+        //    print("Turning Off Mesh");
+        //    gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.None;
+        //});
 
-        keywords.Add("Turn On Mesh", () => {
-            print("Turning On Mesh");
-            gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.Visualization;
-        });
+        //keywords.Add("Turn On Mesh", () => {
+        //    print("Turning On Mesh");
+        //    gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.Visualization;
+        //});
 
         keywords.Add("Pair Device", () => {
             print("Pair Device");

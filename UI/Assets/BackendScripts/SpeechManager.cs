@@ -6,9 +6,9 @@ using HoloToolkit.Unity;
 using System;
 using System.Net;
 using UnityEngine.SceneManagement;
-using UnityEngine.VR.WSA;
 using UnityEngine.VR.WSA.Input;
 using Academy.HoloToolkit.Unity;
+using UnityEngine.VR.WSA;
 
 
 
@@ -16,7 +16,7 @@ using Academy.HoloToolkit.Unity;
 public class SpeechManager : MonoBehaviour
 {
     public Rotate rotate;
-    public SpatialMappingRenderer spatialMappingRenderer;
+    //public UnityEngine.VR.WSA.SpatialMappingRenderer spatialMappingRenderer;
     public GestureManager gestureManager; 
 
     //public TextToSpeechManager tsm;
@@ -73,15 +73,15 @@ public class SpeechManager : MonoBehaviour
 
         });
 
-        keywords.Add("Turn Off Mesh", () => {
-            print("Turning Off Mesh");
-           spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
-        });
+        //keywords.Add("Turn Off Mesh", () => {
+        //    print("Turning Off Mesh");
+        //   spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
+        //});
 
-        keywords.Add("Turn On Mesh", () => {
-            print("Turning On Mesh");
-            spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.Visualization;
-        });
+        //keywords.Add("Turn On Mesh", () => {
+        //    print("Turning On Mesh");
+        //    spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.Visualization;
+        //});
 
        
         
