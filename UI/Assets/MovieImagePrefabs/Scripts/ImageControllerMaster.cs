@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ImageControllerMaster : MonoBehaviour {
 
-	ImageController ic;
-
-	bool isShowing = false;
+    ImageController ic;
 
 	// Use this for initialization
 	void Start () {

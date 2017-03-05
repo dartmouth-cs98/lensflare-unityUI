@@ -66,6 +66,11 @@ namespace HoloToolkit.Unity
 
         private void GestureRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
         {
+            TapGem();
+        }
+        
+        public void TapGem()
+        {
             if (focusedObject != null)
             {
                 focusedObject.SendMessage("OnSelect", SendMessageOptions.DontRequireReceiver);
@@ -77,7 +82,9 @@ namespace HoloToolkit.Unity
                 }
 
             }
+
         }
+
 
         void LateUpdate()
         {

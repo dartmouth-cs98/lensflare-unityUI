@@ -1,20 +1,25 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LoadAssets : MonoBehaviour {
 
 	public string COLLIDER_TAG;
-//	public GameObject gem;
-	public GameObject modelWrapper;
+    public GameObject modelWrapper;
+	public GemPrefabAnimator gpa;
 
-	public GemPrefabAnimator gpa; 
+    string previousUrl = null; 
 
-	public string modelUrl;
+    public void DownloadModel(string url)
+    {
+        if (url != previousUrl)
+        {
+            StartCoroutine(Load(url));
+            previousUrl = url;
+        }
+    }
 
-
-	public IEnumerator Load() {
-		WWW www = WWW.LoadFromCacheOrDownload ("file:///Users/armin/Desktop/redgem" ,1);
+	public IEnumerator Load(string url) {
+		WWW www = WWW.LoadFromCacheOrDownload (url ,1);
 		yield return www;
 
 		foreach (string an in www.assetBundle.GetAllAssetNames()) {

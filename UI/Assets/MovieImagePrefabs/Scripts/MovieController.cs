@@ -1,22 +1,12 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MovieController : MonoBehaviour {
 
 	MovieTexturePlayer mtp;
 	AudioSource aud;
-
-//	bool playing = false;
-
-//	public void LoadMovie(string path) {
-//		// remember to comment out stop in movietextureplayer.cs
-//		mtp = GetComponent<MovieTexturePlayer> ();
-//		mtp.movieTexture = Resources.Load (path) as MovieTexture;
-//
-//		aud = GetComponent<AudioSource> ();
-//		mtp.audioSource = aud;
-//	}
+    WWW diskMovieDir = null;
+    string previousUrl = null; 
 
 	public void StreamMovie(string url) {
 		StartCoroutine (movieLoader (url));
@@ -24,41 +14,38 @@ public class MovieController : MonoBehaviour {
 
 	IEnumerator movieLoader(string url) {
 
-		WWW diskMovieDir = new WWW(url);
-		MovieTexture mt = diskMovieDir.movie;
+        if (diskMovieDir == null || url != previousUrl)
+        {
+            diskMovieDir = new WWW(url);
+            MovieTexture mt = diskMovieDir.movie;
 
-		//Wait for file finish loading
-		while(!mt.isReadyToPlay){
-			yield return null;
-		}
+            //Wait for file finish loading
+            while (!mt.isReadyToPlay)
+            {
+                yield return null;
+            }
 
-		mtp = GetComponent<MovieTexturePlayer> ();
-		mtp.movieTexture = mt; 
+            mtp = GetComponent<MovieTexturePlayer>();
+            mtp.movieTexture = mt;
 
-		aud = GetComponent <AudioSource> ();
-		mtp.audioSource = aud;
-
+            aud = GetComponent<AudioSource>();
+            mtp.audioSource = aud;
+        }
+        previousUrl = url; 
 		mtp.Play ();
 
 	}
 
 	public void PlayMovie () {
-//		if (playing) {
-//			print ("Already playing movie");
-//			return;
-//		}
 		mtp.Play ();
-//		playing = true;
 	}
 
 	public void StopMovie() {
 		mtp.Stop ();
-//		playing = false;
 	}
 
 	public void PauseMovie() {
 		mtp.Pause ();
-//		playing = false;
 	}
 
 }

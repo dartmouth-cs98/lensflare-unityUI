@@ -2,18 +2,14 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.VR.WSA.Persistence;
 using UnityEngine.VR.WSA;
-using UnityEngine.Windows.Speech;
-using System.Linq;
 using UnityEngine.SceneManagement;
-using Academy.HoloToolkit.Unity;
+using HoloToolkit.Unity;
 
 public class LoadingSpeechManager : MonoBehaviour
 {
+    public GestureManagerUser gestureManager; 
     KeywordRecognizer keywordRecognizer = null;
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
 
@@ -45,9 +41,6 @@ public class LoadingSpeechManager : MonoBehaviour
             print("Pair Device");
             SceneManager.LoadScene("PairingScene");
         });
-
-
-
 
         // Tell the KeywordRecognizer about our keywords.
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
