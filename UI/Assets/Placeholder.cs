@@ -14,6 +14,7 @@ public class Placeholder : MonoBehaviour
 {
     KeywordRecognizer keywordRecognizer = null;
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
+    public ChangeMaterial cm;
     public Canvas canvas;
     public bool scanning = false; 
 
@@ -43,22 +44,26 @@ public class Placeholder : MonoBehaviour
         }
     }
 
-    //void Update()
-    //{
-    //    if (Input.GetKeyDown("s"))
-    //    {
-    //        OnScan();
-    //    }
-    //}
+    void Update()
+    {
+        if (Input.GetKeyDown("s"))
+        {
+            OnScan();
+        }
+    }
 	
     public void OnScan()
     {
         print("Scanning for QR Code");
+
         if (scanning)
         {
             return;
         }
+
+        cm.Change("Scan_inprog");
         scanning = true; 
+
 #if !UNITY_EDITOR
         MediaFrameQrProcessing.Wrappers.ZXingQrCodeScanner.ScanFirstCameraForQrCode(
             result =>
@@ -69,12 +74,15 @@ public class Placeholder : MonoBehaviour
                     {
                         PlayerPrefs.SetString("device_token", result.Text);
                         PlayerPrefs.Save();
-                        canvas.GetComponentInChildren<Text>().text = "Sucessfully Paired Device";
+
+                        cm.Change("Scan_success");
+                        //canvas.GetComponentInChildren<Text>().text = "Sucessfully Paired Device";
                         print(result.Text);
                         StartCoroutine(SwitchScene());
                     }
                     else
                     {
+                        cm.Change("Scan_notfound");
                         canvas.GetComponentInChildren<Text>().text = "Pairing failed. Try to scan again"; 
                         print("Token Not Found");
                         scanning = false;

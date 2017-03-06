@@ -5,19 +5,27 @@ using UnityEngine.SceneManagement;
 
 public class ChangeScene : MonoBehaviour {
 
+    public Animator canvasAnim; 
+
     // Use this for initialization
     void Start()
     {
-
-        GameObject canvas = GameObject.FindGameObjectWithTag("SetupFlow");
-        canvas.GetComponent<CanvasAnimation>().GrowCanvas();
-        StartCoroutine(Example());
+        canvasAnim.SetTrigger("StateChange");
+        StartCoroutine(Example(6));
     }
 
-    IEnumerator Example()
+    IEnumerator Example(int dur)
     {
         yield return new WaitForSeconds(6);
+        canvasAnim.SetTrigger("StateChange");
+        StartCoroutine(ShortWait(2));
+    }
+
+    IEnumerator ShortWait(int dur)
+    { 
+        yield return new WaitForSeconds(2);
         SceneManager.LoadScene("LoadingScene");
+
     }
 
 }
