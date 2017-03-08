@@ -24,8 +24,9 @@ public class SpeechManager : MonoBehaviour
 
     Photographer photographer;
     //CanvasAnimation anim;
-    CanvasAnimation uploadingAnim;
-    CanvasAnimation doneAnim;
+    Animator uploadingAnim;
+    Animator doneAnim;
+    Animator instructionAnim; 
     UploadImages uploadImages;
     KeywordRecognizer keywordRecognizer = null;
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
@@ -34,57 +35,42 @@ public class SpeechManager : MonoBehaviour
     bool visualsOn = true;
 
     // Use this for initialization
-
     void Start()
     {
-        uploadingAnim = GameObject.FindGameObjectWithTag("UploadFlow").GetComponent<CanvasAnimation>();
-        doneAnim = GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<CanvasAnimation>();
+        uploadingAnim = GameObject.FindGameObjectWithTag("UploadFlow").GetComponent<Animator>();
+        doneAnim = GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<Animator>();
+        instructionAnim = GameObject.FindGameObjectWithTag("InstructionCanvas").GetComponent<Animator>();
+
         print("done anim" + doneAnim.ToString());
         print("Grow canvas");
-        doneAnim.GrowCanvas();
-        //uploadImages = GetComponent<UploadImages>();
+        instructionAnim.SetTrigger("StateChange");
         photographer = GetComponent<Photographer>();
 
         tsm = GetComponent<TextToSpeechManager>();
 
         string deviceToken = PlayerPrefs.GetString("device_token", "");
         Debug.Log(deviceToken);
-        if (deviceToken.Equals(""))
-        {
-            SceneManager.LoadScene("PairingScene");
-            return;
-        }
 
-        //spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
-
-        //keywords.Add("Next", () => {
-        //    print("Closing canvas...");
-
-        //    //setupAnim.ShrinkCanvas();
-        //    doneAnim.GrowCanvas();
-
-        //});
-
-        keywords.Add("Done", () => {
-            print("Closing canvas...");
-            
-            doneSetup();
-            //calls photo upload, export anchors methods
-
+        keywords.Add("Done", () =>
+        { 
+            if (GameObject.Find("Cursor_box").GetComponent<IconManager>().GetAnchorStore().GetAllIds().Length == 0)
+            {
+                print("No gems in scene");
+                GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<ChangeMaterial>().Change("done_error");
+            }
+            else
+            {
+                print("Closing canvas...");
+                doneSetup();
+            }
         });
 
-        //keywords.Add("Turn Off Mesh", () => {
-        //    print("Turning Off Mesh");
-        //   spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
-        //});
-
-        //keywords.Add("Turn On Mesh", () => {
-        //    print("Turning On Mesh");
-        //    spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.Visualization;
-        //});
-
-       
-        
+        keywords.Add("Delete", () =>
+        {
+            print("Deleting gem...");
+            gestureManager.DeleteGem();
+        });
+               
         // Tell the KeywordRecognizer about our keywords.
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
 
@@ -124,7 +110,6 @@ public class SpeechManager : MonoBehaviour
             localPaths[i] = System.IO.Path.Combine(Application.persistentDataPath, ids[i] + ".jpg");
             s3Paths[i] = ids[i] + ".jpg";
         }
-        //localPaths[0] = "aaa.jpg";
 
         string deviceToken = PlayerPrefs.GetString("device_token", "");
 
@@ -139,8 +124,8 @@ public class SpeechManager : MonoBehaviour
     public void doneSetup()
     {
         print("Done Flow start");
-        uploadingAnim.GrowCanvas();
-        doneAnim.ShrinkCanvas();
+        doneAnim.SetTrigger("StateChange");
+        uploadingAnim.SetTrigger("StateChange");
         PerformImageUpload();
         GameObject.Find("Cursor_box").GetComponent<IconManager>().MakeTransferBatch();
     }

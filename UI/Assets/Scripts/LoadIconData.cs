@@ -12,10 +12,13 @@ public class LoadIconData : MonoBehaviour {
     List<byte> anchorByteBuffer = new List<byte>();
     public WorldAnchorTransferBatch transferBatch;
 
+    const string setTitleMessage = "No title set. Visit lensflare.space to add a title!";
+    const string setTextMessage = "No text set. Visit lensflare.space to add text!";
     const string bucketName = "lensflare-files";
     const string server_url = "http://lensflare-server.herokuapp.com/getSpaceWithToken?token={0}&t={1}";
     bool downloadDone = false;
     bool iconsAnchored = false;
+    string previousAnchorsUrl = null; 
 
     // Track icon info to immediately set when gems are instantiated
     Dictionary<string, Item> iconInfo = new Dictionary<string, Item>();
@@ -66,6 +69,15 @@ public class LoadIconData : MonoBehaviour {
             Space parsedResponse = JsonUtility.FromJson<Space>(detections);
             iconInfo.Clear();
 
+            if (parsedResponse.anchors != previousAnchorsUrl)
+            {
+                gameObject.GetComponent<LoadingSpeechManager>().ClearAllGems();
+                icons.Clear();
+                iconsAnchored = false;
+                previousAnchorsUrl = parsedResponse.anchors;
+            }
+
+
             print(parsedResponse.anchors.Length);
             if (parsedResponse.anchors == null || parsedResponse.anchors.Length == 0)
             {
@@ -78,10 +90,12 @@ public class LoadIconData : MonoBehaviour {
             }
             else
             {
+                print("downloading anchors");
                 iconsAnchored = true;
                 StartCoroutine(DownloadWorldAnchor(parsedResponse.anchors));
             }
 
+            print("updating iconinfo");
             Item[] items = parsedResponse.items;
             for (int j = 0; j < items.Length; j++)
             {
@@ -151,10 +165,11 @@ public class LoadIconData : MonoBehaviour {
 
     private void OnImportComplete(SerializationCompletionReason completionReason, WorldAnchorTransferBatch deserializedTransferBatch)
     {
+        print("import complete");
         if (deserializedTransferBatch.anchorCount == 0)
         {
             print("No Anchors going to placement scene");
-            gameObject.GetComponent<LoadingSpeechManager>().ClearAllGems();
+            Camera.main.GetComponent<LoadingSpeechManager>().ClearAllGems();
 
             SceneManager.LoadScene("PlacementScene");
             return;
@@ -180,21 +195,35 @@ public class LoadIconData : MonoBehaviour {
 
         for (int i = 0; i < anchorIds.Length; i++)
         {
-            print("load icon anchor #:" + anchorIds[i]);
-            GameObject icon = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
+            if (iconInfo.ContainsKey(anchorIds[i]))
+            {
+                print("load icon anchor #:" + anchorIds[i]);
+                GameObject icon = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
 
-            Item info = iconInfo[anchorIds[i]];
-            SetInfo(icon, info);
-            icons[info.iconName] = icon;
+                Item info = iconInfo[anchorIds[i]];
+                SetInfo(icon, info);
+                icons.Add(info.iconName, icon);
 
-            deserializedTransferBatch.LockObject(info.iconName, icon);
+                deserializedTransferBatch.LockObject(info.iconName, icon);
+            }
         }
+
         iconsAnchored = true;
         downloadDone = true;
     }
 
     private void SetInfo(GameObject icon, Item info)
     {
+        if (info.title == "[add title]")
+        {
+            info.title = setTitleMessage;
+        }
+        if (info.text == "[add text]")
+        {
+            info.text = setTextMessage;
+        }
+
+        print("info: " + icon.GetComponent<IconInfo>());
         icon.GetComponent<IconInfo>().info = info;
         print("Text:" + info.text + "title: " + info.title);
     }
@@ -219,6 +248,7 @@ public class LoadIconData : MonoBehaviour {
     [Serializable]
     public class Media
     {
+        public bool selected; 
         public string type;
         public int height;
         public int width;

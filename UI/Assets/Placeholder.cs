@@ -9,13 +9,13 @@ using System.Collections;
 using UnityEngine.VR.WSA.Persistence;
 using UnityEngine.VR.WSA;
 using Academy.HoloToolkit.Unity;
+using HoloToolkit.Unity;
 
 public class Placeholder : MonoBehaviour
 {
     KeywordRecognizer keywordRecognizer = null;
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
     public ChangeMaterial cm;
-    public Canvas canvas;
     public bool scanning = false; 
 
     void Start()
@@ -55,37 +55,36 @@ public class Placeholder : MonoBehaviour
     public void OnScan()
     {
         print("Scanning for QR Code");
-
         if (scanning)
         {
             return;
         }
 
         cm.Change("Scan_inprog");
-        scanning = true; 
+        scanning = true;
 
 #if !UNITY_EDITOR
         MediaFrameQrProcessing.Wrappers.ZXingQrCodeScanner.ScanFirstCameraForQrCode(
             result =>
-            {
+            {   
+
                 UnityEngine.WSA.Application.InvokeOnAppThread(() =>
                 {
-                    if (result.Text != null)
+
+                    if (result == null || result.Text == null)
+                    {
+                        cm.Change("Scan_notfound");
+                        print("Token Not Found");
+                        scanning = false;
+                    } else if (result.Text != null)
                     {
                         PlayerPrefs.SetString("device_token", result.Text);
                         PlayerPrefs.Save();
 
                         cm.Change("Scan_success");
-                        //canvas.GetComponentInChildren<Text>().text = "Sucessfully Paired Device";
+        
                         print(result.Text);
                         StartCoroutine(SwitchScene());
-                    }
-                    else
-                    {
-                        cm.Change("Scan_notfound");
-                        canvas.GetComponentInChildren<Text>().text = "Pairing failed. Try to scan again"; 
-                        print("Token Not Found");
-                        scanning = false;
                     }
 
                 },

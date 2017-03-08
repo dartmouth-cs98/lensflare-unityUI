@@ -329,7 +329,7 @@ namespace HoloToolkit.Unity
                     Debug.LogError("An AudioSource is required and should be assigned to 'Audio Source' in the inspector.");
                 }
                 else
-                { 
+                {
                     #if WINDOWS_UWP
                     synthesizer = new SpeechSynthesizer();
                     #endif
@@ -376,10 +376,38 @@ namespace HoloToolkit.Unity
 
             // Pass to helper method
             #if WINDOWS_UWP
+            synthesizer = new SpeechSynthesizer();
             PlaySpeech(text, ()=> synthesizer.SynthesizeTextToStreamAsync(text));
             #else
             LogSpeech(text);
             #endif
+        }
+
+        /// <summary>
+        /// Returns whether or not the AudioSource is actively playing.
+        /// </summary>
+        /// <returns>
+        /// True, if the AudioSource is playing. False, if the AudioSource is not playing or is null.
+        /// </returns>
+        public bool IsSpeaking()
+        {
+            if (audioSource != null)
+            {
+                return audioSource.isPlaying;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Stops text-to-speech playback.
+        /// </summary>
+        public void StopSpeaking()
+        {
+            if (IsSpeaking())
+            {
+                audioSource.Stop();
+            }
         }
 
         /// <summary>

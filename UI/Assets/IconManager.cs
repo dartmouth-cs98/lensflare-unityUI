@@ -64,13 +64,20 @@ public class IconManager : MonoBehaviour {
         print("Anchor store is " + this.store.ToString());
         transferBatch = new WorldAnchorTransferBatch();
         GameObject[] gems = GameObject.FindGameObjectsWithTag("GemCanvas");
+        print("number of gems:  " + gems.Length);
         foreach(GameObject gem in gems)
         {
-            
             string name = gem.GetComponent<IconInfo>().info.iconName;
-            print("adding anchor with name" + name + " gem " + gem.ToString());
-            WorldAnchor anchor = this.store.Load(name, gem);
-            this.transferBatch.AddWorldAnchor(name, anchor);
+            if (name != null && name != "")
+            {
+                WorldAnchor anchor = this.store.Load(name, gem);
+
+                if (anchor != null)
+                {
+                    print("adding anchor with name" + name + " gem " + gem.ToString());
+                    this.transferBatch.AddWorldAnchor(name, anchor);
+                }
+            }
         }
 
         //print("export anchor count: " + this.transferBatch.GetAllIds().Length);
@@ -89,7 +96,8 @@ public class IconManager : MonoBehaviour {
         {
             // If we have been transferring data and it failed, 
             // tell the client to discard the data
-            print("Export failed - icon manager");
+            print("Export failed, retrying.");
+            MakeTransferBatch();
         }
         else
         {
@@ -130,6 +138,11 @@ public class IconManager : MonoBehaviour {
     public void DeleteAnchor(GameObject go)
     {
         print("deleting anchor" + go);
+        print(go.GetComponent<IconInfo>());
+
+        print(go.GetComponent<IconInfo>().info);
+
+        print(go.GetComponent<IconInfo>().info.iconName);
         this.store.Delete(go.GetComponent<IconInfo>().info.iconName);
  
         DestroyImmediate(go.GetComponent<WorldAnchor>());
@@ -139,11 +152,15 @@ public class IconManager : MonoBehaviour {
     {
         
         GameObject icon = Instantiate(Resources.Load("MediaGemPrefab")) as GameObject;
-        print("ICON" + icon);
         icon.transform.position = vect;
 
         string iconName = "icon_" + System.DateTime.Now.ToString("MMddyyHmmssfff");
-        icon.GetComponent<IconInfo>().info.iconName = iconName;
+        print("ICON: " + iconName);
+
+        LoadIconData.Item item = new LoadIconData.Item();
+        item.iconName = iconName;
+        icon.GetComponent<IconInfo>().info = item;
+        print(icon.GetComponent<IconInfo>().info.iconName);
         SaveAnchor(icon);
     }
 

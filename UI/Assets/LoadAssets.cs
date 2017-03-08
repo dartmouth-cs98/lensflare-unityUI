@@ -7,41 +7,55 @@ public class LoadAssets : MonoBehaviour {
     public GameObject modelWrapper;
 	public GemPrefabAnimator gpa;
 
-    string previousUrl = null; 
-
+    string previous_url = null; 
     public void DownloadModel(string url)
     {
-        if (url != previousUrl)
-        {
-            StartCoroutine(Load(url));
-            previousUrl = url;
-        }
+        StartCoroutine(Load(url));
     }
 
 	public IEnumerator Load(string url) {
-		WWW www = WWW.LoadFromCacheOrDownload (url ,1);
-		yield return www;
 
-		foreach (string an in www.assetBundle.GetAllAssetNames()) {
-			print ("Asset: " + an);
-			GameObject redgem = www.assetBundle.LoadAsset (an) as GameObject;
+        if (url != previous_url)
+        {
+            WWW www = WWW.LoadFromCacheOrDownload(url, 1);
+            yield return www;
 
-			GameObject rg = Instantiate (redgem) as GameObject;
+            foreach (string an in www.assetBundle.GetAllAssetNames())
+            {
+                print("Asset: " + an);
+                GameObject redgem = www.assetBundle.LoadAsset(an) as GameObject;
 
-			RuntimeAnimatorController anim = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("ScaleGO2", typeof(RuntimeAnimatorController )));
-			rg.GetComponent<Animator> ().runtimeAnimatorController = anim;
-			gpa.modelAnim = rg.GetComponent<Animator> ();
+                GameObject rg = Instantiate(redgem) as GameObject;
 
-			rg.transform.SetParent(modelWrapper.transform);
-			rg.transform.position = modelWrapper.transform.position;
+                RuntimeAnimatorController anim = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("ScaleGO2", typeof(RuntimeAnimatorController)));
+                rg.GetComponent<Animator>().runtimeAnimatorController = anim;
+                gpa.modelAnim = rg.GetComponent<Animator>();
 
-			rg.AddComponent<RotateGem> ();
+                rg.transform.SetParent(modelWrapper.transform);
 
-			foreach (Transform child in rg.transform) {
-				MeshCollider mc = child.gameObject.AddComponent (typeof(MeshCollider)) as MeshCollider;
-				child.gameObject.tag = COLLIDER_TAG;
-			}
-		}
+                if (modelWrapper.transform.childCount != 0)
+                {
+                    Transform prev = modelWrapper.transform.GetChild(0);
+                    if (prev != null) { 
+                        Destroy(prev);
+                    }
+                }
+               
+
+                rg.transform.position = modelWrapper.transform.position;
+
+                rg.AddComponent<RotateGem>();
+
+                foreach (Transform child in rg.transform)
+                {
+                    MeshCollider mc = child.gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
+                    child.gameObject.tag = COLLIDER_TAG;
+                }
+            }
+        }
+        previous_url = url;
+        gpa.modelAnim.SetTrigger("StateChange");
+		
 	}
 
 }

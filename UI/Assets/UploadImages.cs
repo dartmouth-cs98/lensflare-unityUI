@@ -24,23 +24,35 @@ public class UploadImages : MonoBehaviour
     // MODIFY THIS TO CHANGE THE CALLBACK TYPE (if adding arguments, need to pass those down as well)
     public delegate bool GenericDelegate(string url); // boolean return type, no arguments
     private GenericDelegate genDel;
-    private CanvasAnimation uploadingAnim;
+    public ChangeMaterial cm;
     private bool imagesUploaded = false;
     private bool anchorsUploaded = false;
+    private bool canvasUpdated = false;
 
     public void Start()
     {
-        uploadingAnim = GameObject.FindGameObjectWithTag("UploadFlow").GetComponent<CanvasAnimation>();
     }
 
     void Update()
     {
         if (imagesUploaded && anchorsUploaded)
         {
-            // TODO wait a few seconds
+            if (!canvasUpdated)
+            {
+                canvasUpdated = true;
 
-            SceneManager.LoadScene("LoadingScene");
+                // TODO change to upload complete canvas
+                print("Success-- About to Move to Success Canvas");
+                cm.Change("upload_success");
+            }
+            StartCoroutine(NotifySuccess());
         }
+    }
+
+    IEnumerator NotifySuccess()
+    {
+        yield return new WaitForSeconds(6);
+        SceneManager.LoadScene("LoadingScene");
     }
 
     public void StartUploadFiles(string[] filePaths, string[] s3FilePaths, string deviceToken, GenericDelegate cb)
@@ -135,13 +147,14 @@ public class UploadImages : MonoBehaviour
                 if (req.isError)
                 {
                     print(req.error);
+                    cm.Change("upload_error");
+
                 }
                 else
                 {
                     print(req.responseCode);
                     print("Byte upload worked");
 
-                    uploadingAnim.ChangeSprite("uploading_finished");
                     print("Changed uploading sprite");
 
                     anchorsUploaded = true;

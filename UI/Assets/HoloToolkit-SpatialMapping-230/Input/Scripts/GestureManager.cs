@@ -41,7 +41,7 @@ namespace Academy.HoloToolkit.Unity
         private bool dragging = false;
         private GameObject draggedGO;
         private float iconOffset;
-
+        private bool placingGems = false; 
 
         void Start()
         {
@@ -130,13 +130,30 @@ namespace Academy.HoloToolkit.Unity
                         focusedObject.gameObject.layer = 2;
                         iconManager.DeleteAnchor(draggedGO);
                     }
-                    else
+                    else if (focusedObject.tag == "InstructionCanvas")
+                    {
+                        focusedObject.GetComponent<Animator>().SetTrigger("StateChange");
+                        GameObject.FindGameObjectWithTag("DoneCanvas").GetComponent<Animator>().SetTrigger("StateChange");
+                        placingGems = true;
+                    }
+                    else if (placingGems)
                     {
                         RaycastHit hit = GazeManager.Instance.HitInfo;
                         Vector3 vect = hit.point + (hit.normal * iconOffset);
                         gameObject.GetComponent<IconManager>().PlaceBox(vect);
                     }
                 }
+
+            }
+        }
+        
+        public void DeleteGem()
+        {
+            if (focusedObject != null && focusedObject.tag == "Gem")
+            {
+                GameObject gem = focusedObject.transform.parent.transform.parent.transform.gameObject;
+                gameObject.GetComponent<IconManager>().DeleteAnchor(gem);
+                DestroyImmediate(focusedObject);
             }
         } 
     }

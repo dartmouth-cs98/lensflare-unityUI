@@ -9,7 +9,7 @@ public class CanvasAnimation : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
         print("Loading canvas...1");
-        anim = GetComponentInChildren<Animator> ();
+        anim = GetComponent<Animator> ();
         print("Loading canvas...2");
     }
 	
@@ -23,21 +23,21 @@ public class CanvasAnimation : MonoBehaviour {
 			GrowCanvas ();
 		}
 		if (Input.GetKeyDown ("a")) {
-			ChangeSprite ("get_started");
+			ChangeSprite ("get_started", "UploadFlow");
 		}
 	}
 
 	public void ShrinkCanvas() {
-		anim.SetTrigger ("Shrink");
+		anim.SetTrigger ("StateChange");
 	}
     
 	public void GrowCanvas() {
         print("Grow anim" + anim.ToString());
-		anim.SetTrigger("Grow");
+		anim.SetTrigger("StateChange");
 	}
 
-	public void ChangeSprite(string imgName) {
-		GameObject sprite = GameObject.FindGameObjectWithTag ("CanvasImage");
+	public void ChangeSprite(string imgName, string tag) {
+		GameObject sprite = GameObject.FindGameObjectWithTag (tag);
 		SpriteRenderer renderer = sprite.GetComponent<SpriteRenderer> ();
 		renderer.sprite = Resources.Load <Sprite> (imgName);
 	}

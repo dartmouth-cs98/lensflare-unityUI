@@ -31,9 +31,9 @@ public class MovieController : MonoBehaviour {
             aud = GetComponent<AudioSource>();
             mtp.audioSource = aud;
         }
-        previousUrl = url; 
-		mtp.Play ();
-
+        previousUrl = url;
+        StopMovie();
+        PlayMovie();
 	}
 
 	public void PlayMovie () {

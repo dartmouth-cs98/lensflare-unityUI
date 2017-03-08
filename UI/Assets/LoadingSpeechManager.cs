@@ -20,7 +20,7 @@ public class LoadingSpeechManager : MonoBehaviour
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
         //gameObject.GetComponent<SpatialMappingRenderer>().renderState = SpatialMappingRenderer.RenderState.None;
 
-        keywords.Add("Create scene", () => {
+        keywords.Add("Lensflare create scene", () => {
             print("entering placement mode");
             ClearAllGems();
 
