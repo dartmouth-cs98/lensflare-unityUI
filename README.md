@@ -28,7 +28,7 @@ The build process for LensFlare is reasonably intricate. Microsoft offers excell
 ## Contributor responsibilities/information:
 [*Ellis Guo*] 
 
-[*Armin Mahban*] 
+[*Armin Mahban*] Media gem model/animations/web loading, instruction canvas design and implmentation, front end design, poster, world anchor processing (< 1/2), bug fixes. 
 
 [*Jeremy Mittleman*] 
 
