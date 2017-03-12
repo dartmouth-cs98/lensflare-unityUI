@@ -60,6 +60,13 @@ The build process for LensFlare is reasonably intricate. Microsoft offers excell
 
 Thanks Tim!
 
+## External Resources
+
+ * Hololens ToolKit: <https://github.com/Microsoft/HoloToolkit-Unity>
+ * Gem Shader: <https://www.assetstore.unity3d.com/en/#!/content/3>
+ * World Space Canvas Tutorial: <https://www.youtube.com/watch?v=Mzt1rEEdeOI&t=1515s>
+
+
 ## Screenshots
 
 
