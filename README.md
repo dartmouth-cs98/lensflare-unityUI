@@ -62,9 +62,6 @@ Thanks Tim!
 
 ## Screenshots
 
-<img src="http://i.imgur.com/9g3ivN1.png">
-<img src="http://i.imgur.com/AthI9uj.jpg">
-<img src="http://i.imgur.com/yg6J2I0.jpg">
 
 ## Poster
 
