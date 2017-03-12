@@ -15,7 +15,7 @@ The HoloLens aspect of the Lensflare application is written using the Unity Engi
 
 To set up your first space, follow the following instructions:
 
-1. Sign up or log on at our [website](https://www.lensflare.space)
+1. Sign up or log on at our [website](http://www.lensflare.space)
 2. Create a space with a name of your choosing
 3. Create a device and associate it with the space made in Step 2
 4. Open the QR code for the device
