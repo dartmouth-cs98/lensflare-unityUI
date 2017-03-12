@@ -11,11 +11,11 @@ UI: On the HoloLens, the UI for Lensflare consists primarily of interactive gems
 Lensflare also includes a backend web application for pairing HoloLens devices and associating media with gems in a user's spaces. This web application consists of a few simple and straightforward pages providing all the necessary steps for fully annotating as many spaces as a user might wish. 
 The HoloLens aspect of the Lensflare application is written using the Unity Engine and C# language. The web application aspect is written in JavaScript with Node and Express, and utilizes Heroku for the backend server, MongoDB for the database, and Amazon S3 for remote storage.
 
-## App flow
+## App Flow
 
 To set up your first space, follow the following instructions:
 
-1. Sign up or log on at our [Website](www.lensflare.space) 
+1. Sign up or log on at our [website](https://www.lensflare.space)
 2. Create a space with a name of your choosing
 3. Create a device and associate it with the space made in Step 2
 4. Open the QR code for the device
