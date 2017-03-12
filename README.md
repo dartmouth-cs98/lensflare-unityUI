@@ -4,8 +4,6 @@ Contributors: Ellis Guo, Armin Mahban, Jeremy Mittleman, Nick Moolenijzer, and R
 
 Lensflare is an application for the Microsoft HoloLens that imagines the many possibilities for augmented reality as a part of daily life. How can AR technology improve or enhance our ordinary experiences? Through providing the user the ability to annotate any space of their choosing in any manner of their choosing, Lensflare allows anyone to make their own holographic playground, work station, art exhibit, or whatever else they might think of. With Lensflare, the world is your sandbox.
 
-TODO: add screenshots
-
 ## Architecture:
 UI: On the HoloLens, the UI for Lensflare consists primarily of interactive gems through which users can attach text, images, videos, or even holograms to any point in their chosen space. When sharing a space with others, these gems would be the primary mode by which the users participate in the experience intended by the space designer. When actually designing your own space, the UI also includes voice assistance and holographic canvases for guiding the user through the space creation process.  
 Lensflare also includes a backend web application for pairing HoloLens devices and associating media with gems in a user's spaces. This web application consists of a few simple and straightforward pages providing all the necessary steps for fully annotating as many spaces as a user might wish. 
@@ -61,3 +59,13 @@ The build process for LensFlare is reasonably intricate. Microsoft offers excell
 ## Acknowledgements
 
 Thanks Tim!
+
+## Screenshots
+
+<img src="http://i.imgur.com/9g3ivN1.png">
+<img src="http://i.imgur.com/AthI9uj.jpg">
+<img src="http://i.imgur.com/yg6J2I0.jpg">
+
+## Poster
+
+<img src="http://i.imgur.com/C4MJiGl.jpg">
