@@ -27,6 +27,12 @@ To set up your first space, follow the following instructions:
 10. Add text, photos, videos, or meshes to each gem on lensflare.space
 11. Watch as the data updates in real time!
 
+As a user, the flow is much shorter:
+
+1. Start the app
+2. Wait briefly for the data to load
+3. Interact with the gems in the space! 
+
 ## Code:
 As of Mar 8th: The `master` branch of the repo lensflare-unityUI contains the most up-to-date code in development for the HoloLens aspect of the Lensflare application. The most up-to-date code in development for the web application aspect of the Lensflare application resides on the `master` branch of the repo lensflare-server. The posted code base on this repo includes 
 
