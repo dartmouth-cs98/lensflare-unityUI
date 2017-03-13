@@ -73,5 +73,5 @@ Thanks Tim!
 ## Poster
 
 <img src="http://i.imgur.com/C4MJiGl.jpg">
-[Imgur](http://i.imgur.com/yjEBfMF.jpg)
+<img src="http://i.imgur.com/yjEBfMF.jpg">
 
