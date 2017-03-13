@@ -20,10 +20,15 @@ public class VoiceAssistant : MonoBehaviour {
         }
         if (string.Equals(scene.name, "LoadingScene", System.StringComparison.Ordinal))
         {
-            textToSpeech.SpeakText("Select a gem to see media!");
+            if(!PlayerPrefs.GetString("device_token","").Equals(""))
+            {
+                textToSpeech.SpeakText("Select a gem to see media!");
+
+            }
         }
         if (string.Equals(scene.name, "PairingScene", System.StringComparison.Ordinal))
         {
+            print("Voice Assitaint knoes I am in the pairing scene");
             textToSpeech.SpeakText("Scan the QR code to sync your HoloLens!");
         }
         if (string.Equals(scene.name, "PlacementScene", System.StringComparison.Ordinal))

@@ -24,7 +24,15 @@ public class ChangeScene : MonoBehaviour {
     IEnumerator ShortWait(int dur)
     { 
         yield return new WaitForSeconds(2);
-        SceneManager.LoadScene("LoadingScene");
+
+        if (PlayerPrefs.GetString("device_token", "").Equals(""))
+        {
+            SceneManager.LoadScene("PairingScene");
+        }
+        else
+        {
+            SceneManager.LoadScene("LoadingScene");
+        }
 
     }
 
